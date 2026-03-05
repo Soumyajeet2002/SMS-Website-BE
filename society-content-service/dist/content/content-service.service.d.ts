@@ -1,10 +1,13 @@
 import { Repository } from 'typeorm';
 import { ContentEntity } from './entities/content.entity';
 import { CreateContentDto } from './dto/create-content.dto';
+import { Request } from 'express';
 export declare class ContentService {
-    private readonly sqlRepo;
-    constructor(sqlRepo: Repository<ContentEntity>);
-    create(dto: CreateContentDto, req: any): Promise<{
+    private readonly sqlRepo?;
+    private readonly logger;
+    constructor(sqlRepo?: Repository<ContentEntity> | undefined);
+    executeByActionType(fn: string, ...args: any[]): Promise<unknown>;
+    _createContentSql(dto: CreateContentDto, req: Request): Promise<{
         message: string;
         data: {
             contentId: string;
@@ -21,24 +24,7 @@ export declare class ContentService {
             status: import("./entities/content.entity").ContentStatus;
         };
     }>;
-    findOne(contentId: string): Promise<{
-        message: string;
-        data: {
-            contentId: string;
-            societyId: string;
-            slug: string;
-            title: string;
-            contentType: string;
-            currentVersionNo: number;
-            workingVersionNo: number;
-            publishAt: Date | undefined;
-            expireAt: Date | undefined;
-            priority: number;
-            isFeatured: boolean;
-            status: import("./entities/content.entity").ContentStatus;
-        };
-    }>;
-    findAll(): Promise<{
+    _findAllSql(): Promise<{
         message: string;
         total: number;
         data: {
@@ -55,5 +41,25 @@ export declare class ContentService {
             isFeatured: boolean;
             status: import("./entities/content.entity").ContentStatus;
         }[];
+    }>;
+    _findOneSql(contentId: string): Promise<{
+        message: string;
+        data: {
+            contentId: string;
+            societyId: string;
+            slug: string;
+            title: string;
+            contentType: string;
+            currentVersionNo: number;
+            workingVersionNo: number;
+            publishAt: Date | undefined;
+            expireAt: Date | undefined;
+            priority: number;
+            isFeatured: boolean;
+            status: import("./entities/content.entity").ContentStatus;
+        };
+    }>;
+    _removeContentSql(contentId: string): Promise<{
+        message: string;
     }>;
 }
