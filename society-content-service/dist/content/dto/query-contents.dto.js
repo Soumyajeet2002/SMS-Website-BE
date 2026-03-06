@@ -14,6 +14,7 @@ const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class QueryContentDto {
     search;
+    contentType;
     page;
     limit;
     sortBy;
@@ -22,13 +23,22 @@ class QueryContentDto {
 exports.QueryContentDto = QueryContentDto;
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
-        description: 'Search by title',
-        example: 'Welcome',
+        description: 'Search by slug or contentType',
+        example: 'home-page',
     }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], QueryContentDto.prototype, "search", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Filter by content type',
+        example: 'page',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], QueryContentDto.prototype, "contentType", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({
         description: 'Page number',

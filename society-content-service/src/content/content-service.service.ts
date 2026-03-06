@@ -144,7 +144,8 @@ import { ContentEntity } from './entities/content.entity';
 import { CreateContentDto } from './dto/create-content.dto';
 import { contentResponseMapper } from './mappers/content.response.mapper';
 import { Request } from 'express';
-// import { QueryContentDto } from './dto/query-contents.dto';
+import { QueryContentDto } from './dto/query-contents.dto';
+import { CONTENT } from 'src/common/messages/specific.msg';
 
 @Injectable()
 export class ContentService {
@@ -185,7 +186,7 @@ export class ContentService {
       const saved = await this.sqlRepo!.save(entity);
 
       return {
-        message: 'Content created successfully',
+        message: CONTENT.SUCCESS.CONTENT_CREATED,
         data: contentResponseMapper(saved),
       };
     } catch (error: unknown) {
@@ -197,18 +198,51 @@ export class ContentService {
         });
       }
 
-      throw new InternalServerErrorException('Content creation failed');
+      throw new InternalServerErrorException(CONTENT.ERRORS.CREATE_FAILED);
     }
   }
 
   /** Get All Contents */
-  async _findAllSql() {
+  async _findAllSql(query: QueryContentDto) {
     try {
-      const data = await this.sqlRepo!.find();
+      const qb = this.sqlRepo!.createQueryBuilder('content');
+
+      /** Search */
+      if (query.search) {
+        qb.andWhere(
+          '(content.slug ILIKE :search OR content.contentType ILIKE :search)',
+          { search: `%${query.search}%` },
+        );
+      }
+
+      /** Filter */
+      if (query.contentType) {
+        qb.andWhere('content.contentType = :contentType', {
+          contentType: query.contentType,
+        });
+      }
+
+      /** Pagination */
+      const page = Number(query.page) || 1;
+      const limit = Number(query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      /** Sorting */
+      const sortBy = query.sortBy || 'createdAt';
+      const sortOrder = query.sortOrder || 'DESC';
+
+      qb.orderBy(`content.${sortBy}`, sortOrder as 'ASC' | 'DESC')
+        .skip(skip)
+        .take(limit);
+
+      const [data, total] = await qb.getManyAndCount();
 
       return {
-        message: 'Contents fetched successfully',
-        total: data.length,
+        message: CONTENT.SUCCESS.CONTENT_FETCHED,
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
         data: data.map(contentResponseMapper),
       };
     } catch (error: unknown) {
@@ -219,14 +253,14 @@ export class ContentService {
         });
       }
 
-      throw new InternalServerErrorException('Content fetch failed');
+      throw new InternalServerErrorException(CONTENT.ERRORS.FETCH_FAILED);
     }
   }
 
   /** Find One Content */
   async _findOneSql(contentId: string) {
     if (!isUUID(contentId)) {
-      throw new BadRequestException('Invalid Content ID');
+      throw new BadRequestException(CONTENT.ERRORS.INVALID_CONTENT_ID);
     }
 
     try {
@@ -235,11 +269,11 @@ export class ContentService {
       });
 
       if (!entity) {
-        throw new NotFoundException('Content not found');
+        throw new NotFoundException(CONTENT.ERRORS.CONTENT_NOT_FOUND);
       }
 
       return {
-        message: 'Content fetched successfully',
+        message: CONTENT.SUCCESS.CONTENT_FETCHED,
         data: contentResponseMapper(entity),
       };
     } catch (error: unknown) {
@@ -250,7 +284,7 @@ export class ContentService {
         });
       }
 
-      throw new InternalServerErrorException('Content fetch failed');
+      throw new InternalServerErrorException(CONTENT.ERRORS.FETCH_ONE_FAILED);
     }
   }
 
@@ -262,7 +296,7 @@ export class ContentService {
       await this.sqlRepo!.delete({ contentId });
 
       return {
-        message: 'Content deleted successfully',
+        message: CONTENT.SUCCESS.CONTENT_DELETED,
       };
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -272,7 +306,7 @@ export class ContentService {
         });
       }
 
-      throw new InternalServerErrorException('Content delete failed');
+      throw new InternalServerErrorException(CONTENT.ERRORS.DELETE_FAILED);
     }
   }
 }

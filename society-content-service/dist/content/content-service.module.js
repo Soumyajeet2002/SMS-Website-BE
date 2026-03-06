@@ -9,9 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const content_entity_1 = require("./entities/content.entity");
-const content_service_service_1 = require("./content-service.service");
 const content_service_controller_1 = require("./content-service.controller");
+const content_service_service_1 = require("./content-service.service");
+const content_entity_1 = require("./entities/content.entity");
 let ContentModule = class ContentModule {
 };
 exports.ContentModule = ContentModule;
@@ -20,7 +20,6 @@ exports.ContentModule = ContentModule = __decorate([
         imports: [typeorm_1.TypeOrmModule.forFeature([content_entity_1.ContentEntity])],
         controllers: [content_service_controller_1.ContentController],
         providers: [content_service_service_1.ContentService],
-        exports: [content_service_service_1.ContentService],
     })
 ], ContentModule);
 //# sourceMappingURL=content-service.module.js.map

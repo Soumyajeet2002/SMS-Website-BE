@@ -2,6 +2,7 @@ import { Repository } from 'typeorm';
 import { ContentEntity } from './entities/content.entity';
 import { CreateContentDto } from './dto/create-content.dto';
 import { Request } from 'express';
+import { QueryContentDto } from './dto/query-contents.dto';
 export declare class ContentService {
     private readonly sqlRepo?;
     private readonly logger;
@@ -24,9 +25,12 @@ export declare class ContentService {
             status: import("./entities/content.entity").ContentStatus;
         };
     }>;
-    _findAllSql(): Promise<{
+    _findAllSql(query: QueryContentDto): Promise<{
         message: string;
+        page: number;
+        limit: number;
         total: number;
+        totalPages: number;
         data: {
             contentId: string;
             societyId: string;

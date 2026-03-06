@@ -20,6 +20,7 @@ const typeorm_2 = require("typeorm");
 const class_validator_1 = require("class-validator");
 const content_entity_1 = require("./entities/content.entity");
 const content_response_mapper_1 = require("./mappers/content.response.mapper");
+const specific_msg_1 = require("../common/messages/specific.msg");
 let ContentService = ContentService_1 = class ContentService {
     sqlRepo;
     logger = new common_1.Logger(ContentService_1.name);
@@ -48,7 +49,7 @@ let ContentService = ContentService_1 = class ContentService {
             });
             const saved = await this.sqlRepo.save(entity);
             return {
-                message: 'Content created successfully',
+                message: specific_msg_1.CONTENT.SUCCESS.CONTENT_CREATED,
                 data: (0, content_response_mapper_1.contentResponseMapper)(saved),
             };
         }
@@ -60,15 +61,35 @@ let ContentService = ContentService_1 = class ContentService {
                     payload: dto,
                 });
             }
-            throw new common_1.InternalServerErrorException('Content creation failed');
+            throw new common_1.InternalServerErrorException(specific_msg_1.CONTENT.ERRORS.CREATE_FAILED);
         }
     }
-    async _findAllSql() {
+    async _findAllSql(query) {
         try {
-            const data = await this.sqlRepo.find();
+            const qb = this.sqlRepo.createQueryBuilder('content');
+            if (query.search) {
+                qb.andWhere('(content.slug ILIKE :search OR content.contentType ILIKE :search)', { search: `%${query.search}%` });
+            }
+            if (query.contentType) {
+                qb.andWhere('content.contentType = :contentType', {
+                    contentType: query.contentType,
+                });
+            }
+            const page = Number(query.page) || 1;
+            const limit = Number(query.limit) || 10;
+            const skip = (page - 1) * limit;
+            const sortBy = query.sortBy || 'createdAt';
+            const sortOrder = query.sortOrder || 'DESC';
+            qb.orderBy(`content.${sortBy}`, sortOrder)
+                .skip(skip)
+                .take(limit);
+            const [data, total] = await qb.getManyAndCount();
             return {
-                message: 'Contents fetched successfully',
-                total: data.length,
+                message: specific_msg_1.CONTENT.SUCCESS.CONTENT_FETCHED,
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
                 data: data.map(content_response_mapper_1.contentResponseMapper),
             };
         }
@@ -79,22 +100,22 @@ let ContentService = ContentService_1 = class ContentService {
                     stack: error.stack,
                 });
             }
-            throw new common_1.InternalServerErrorException('Content fetch failed');
+            throw new common_1.InternalServerErrorException(specific_msg_1.CONTENT.ERRORS.FETCH_FAILED);
         }
     }
     async _findOneSql(contentId) {
         if (!(0, class_validator_1.isUUID)(contentId)) {
-            throw new common_1.BadRequestException('Invalid Content ID');
+            throw new common_1.BadRequestException(specific_msg_1.CONTENT.ERRORS.INVALID_CONTENT_ID);
         }
         try {
             const entity = await this.sqlRepo.findOne({
                 where: { contentId },
             });
             if (!entity) {
-                throw new common_1.NotFoundException('Content not found');
+                throw new common_1.NotFoundException(specific_msg_1.CONTENT.ERRORS.CONTENT_NOT_FOUND);
             }
             return {
-                message: 'Content fetched successfully',
+                message: specific_msg_1.CONTENT.SUCCESS.CONTENT_FETCHED,
                 data: (0, content_response_mapper_1.contentResponseMapper)(entity),
             };
         }
@@ -105,7 +126,7 @@ let ContentService = ContentService_1 = class ContentService {
                     stack: error.stack,
                 });
             }
-            throw new common_1.InternalServerErrorException('Content fetch failed');
+            throw new common_1.InternalServerErrorException(specific_msg_1.CONTENT.ERRORS.FETCH_ONE_FAILED);
         }
     }
     async _removeContentSql(contentId) {
@@ -113,7 +134,7 @@ let ContentService = ContentService_1 = class ContentService {
             await this._findOneSql(contentId);
             await this.sqlRepo.delete({ contentId });
             return {
-                message: 'Content deleted successfully',
+                message: specific_msg_1.CONTENT.SUCCESS.CONTENT_DELETED,
             };
         }
         catch (error) {
@@ -123,7 +144,7 @@ let ContentService = ContentService_1 = class ContentService {
                     stack: error.stack,
                 });
             }
-            throw new common_1.InternalServerErrorException('Content delete failed');
+            throw new common_1.InternalServerErrorException(specific_msg_1.CONTENT.ERRORS.DELETE_FAILED);
         }
     }
 };

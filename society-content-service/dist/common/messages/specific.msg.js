@@ -160,8 +160,8 @@ exports.PACKAGEMAPPING = {
 };
 exports.CONTENT = {
     ERRORS: {
-        INVALID_CONTENT_ID: 'Invalid facility id',
-        CREATE_FAILED: 'Unable to create amenity',
+        INVALID_CONTENT_ID: 'Invalid Content id',
+        CREATE_FAILED: 'Unable to create content',
         FETCH_FAILED: 'Unable to fetch contents',
         FETCH_ONE_FAILED: 'Unable to fetch content',
         CONTENT_NOT_FOUND: 'Content does not exist',

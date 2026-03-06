@@ -45,16 +45,16 @@
 // }
 
 // New structure code
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Query } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { ContentService } from './content-service.service';
 import { CreateContentDto } from './dto/create-content.dto';
+import { QueryContentDto } from './dto/query-contents.dto';
 
-@ApiBearerAuth('access-token')
 @Controller('contents')
 export class ContentController {
-  constructor(private readonly contentService: ContentService) {}
+  constructor(private contentService: ContentService) {}
 
   /** Create Content */
   @ApiBearerAuth('access-token')
@@ -68,8 +68,8 @@ export class ContentController {
   @ApiBearerAuth('access-token')
   // @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll() {
-    return this.contentService.executeByActionType('findAll');
+  async findAll(@Query() query: QueryContentDto) {
+    return this.contentService.executeByActionType('findAll', query);
   }
 
   /** Get one content by id */
