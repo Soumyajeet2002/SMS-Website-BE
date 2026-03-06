@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PACKAGEMAPPING = exports.CATGSERVICEMAP = exports.STATE = exports.DISTRICT = exports.GENCODE = exports.PACKAGE = exports.SERVICES = exports.SOCIETY_LEVEL = exports.AMENITY = exports.FACILITY = void 0;
+exports.CONTENT = exports.PACKAGEMAPPING = exports.CATGSERVICEMAP = exports.STATE = exports.DISTRICT = exports.GENCODE = exports.PACKAGE = exports.SERVICES = exports.SOCIETY_LEVEL = exports.AMENITY = exports.FACILITY = void 0;
 exports.FACILITY = {
     ERRORS: {
         INVALID_FACILITY_ID: 'Invalid facility id',
@@ -16,7 +16,7 @@ exports.FACILITY = {
         FACILITY_CREATED: 'Facility created successfully',
         FACILITY_UPDATED: 'Facility updated successfully',
         FACILITY_FETCHED: 'Facility fetched successfully',
-    }
+    },
 };
 exports.AMENITY = {
     ERRORS: {
@@ -33,7 +33,7 @@ exports.AMENITY = {
         AMENITY_CREATED: 'Amenity created successfully',
         AMENITY_UPDATED: 'Amenity updated successfully',
         AMENITY_FETCHED: 'Amenity fetched successfully',
-    }
+    },
 };
 exports.SOCIETY_LEVEL = {
     ERRORS: {
@@ -67,7 +67,7 @@ exports.SERVICES = {
         SERVICE_CREATED: 'Service created successfully',
         SERVICE_UPDATED: 'Service updated successfully',
         SERVICE_FETCHED: 'Service fetched successfully',
-    }
+    },
 };
 exports.PACKAGE = {
     ERRORS: {
@@ -78,14 +78,14 @@ exports.PACKAGE = {
         PACKAGE_NOT_FOUND: 'Package does not exist',
         UPDATE_FAILED: 'Unable to update package details',
         DELETE_FAILED: 'Failed to delete package',
-        REQUIRED: 'Id is required'
+        REQUIRED: 'Id is required',
     },
     SUCCESS: {
         PACKAGE_DELETED: 'Package marked as deleted',
         PACKAGE_CREATED: 'Package created successfully',
         PACKAGE_UPDATED: 'Package updated successfully',
         PACKAGE_FETCHED: 'Package fetched successfully',
-    }
+    },
 };
 exports.GENCODE = {
     ERRORS: {
@@ -102,27 +102,27 @@ exports.GENCODE = {
         GENCODE_CREATED: 'Gencode created successfully',
         GENCODE_UPDATED: 'Gencode updated successfully',
         GENCODE_FETCHED: 'Gencode fetched successfully',
-    }
+    },
 };
 exports.DISTRICT = {
     ERRORS: {
         INVALID_ID: 'Invalid id',
         FETCH_FAILED: 'Unable to fetch districts',
-        DISTRICT_NOT_FOUND: 'District does not exist'
+        DISTRICT_NOT_FOUND: 'District does not exist',
     },
     SUCCESS: {
         DISTRICT_FETCHED: 'District fetched successfully',
-    }
+    },
 };
 exports.STATE = {
     ERRORS: {
         INVALID_ID: 'Invalid id',
         FETCH_FAILED: 'Unable to fetch states',
-        STATE_NOT_FOUND: 'State does not exist'
+        STATE_NOT_FOUND: 'State does not exist',
     },
     SUCCESS: {
         STATE_FETCHED: 'State fetched successfully',
-    }
+    },
 };
 exports.CATGSERVICEMAP = {
     ERRORS: {
@@ -132,14 +132,14 @@ exports.CATGSERVICEMAP = {
         MAP_NOT_FOUND: 'Mapped category and service does not exist',
         UPDATE_FAILED: 'Unable to update details',
         DELETE_FAILED: 'Failed to delete',
-        REQUIRED: 'categoryCode and serviceDetails are required'
+        REQUIRED: 'categoryCode and serviceDetails are required',
     },
     SUCCESS: {
         CATGMAP_CREATED: 'Category and service Mapped successfully',
         CATGMAP_FETCHED: 'Mapped category and service fetched successfully',
         CATGMAP_UPDATED: 'Mapped category and service updated successfully',
         CATGMAP_DELETED: 'Mapped category and service marked as deleted',
-    }
+    },
 };
 exports.PACKAGEMAPPING = {
     ERRORS: {
@@ -149,13 +149,30 @@ exports.PACKAGEMAPPING = {
         MAP_NOT_FOUND: 'Mapped package does not exist',
         UPDATE_FAILED: 'Unable to update details',
         DELETE_FAILED: 'Failed to delete',
-        REQUIRED: 'packageId and Details are required'
+        REQUIRED: 'packageId and Details are required',
     },
     SUCCESS: {
         PKGMAP_CREATED: 'Data Mapped successfully',
         PKGMAP_FETCHED: 'Mapped package and data fetched successfully',
         PKGMAP_UPDATED: 'Mapped package and data updated successfully',
         PKGMAP_DELETED: 'Mapped package and data marked as deleted',
-    }
+    },
+};
+exports.CONTENT = {
+    ERRORS: {
+        INVALID_CONTENT_ID: 'Invalid facility id',
+        CREATE_FAILED: 'Unable to create amenity',
+        FETCH_FAILED: 'Unable to fetch contents',
+        FETCH_ONE_FAILED: 'Unable to fetch content',
+        CONTENT_NOT_FOUND: 'Content does not exist',
+        UPDATE_FAILED: 'Unable to update contents details',
+        DELETE_FAILED: 'Failed to delete contents',
+    },
+    SUCCESS: {
+        CONTENT_DELETED: 'Content marked as deleted',
+        CONTENT_CREATED: 'Content created successfully',
+        CONTENT_UPDATED: 'Content updated successfully',
+        CONTENT_FETCHED: 'Content fetched successfully',
+    },
 };
 //# sourceMappingURL=specific.msg.js.map

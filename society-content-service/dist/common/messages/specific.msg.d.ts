@@ -155,3 +155,20 @@ export declare const PACKAGEMAPPING: {
         PKGMAP_DELETED: string;
     };
 };
+export declare const CONTENT: {
+    ERRORS: {
+        INVALID_CONTENT_ID: string;
+        CREATE_FAILED: string;
+        FETCH_FAILED: string;
+        FETCH_ONE_FAILED: string;
+        CONTENT_NOT_FOUND: string;
+        UPDATE_FAILED: string;
+        DELETE_FAILED: string;
+    };
+    SUCCESS: {
+        CONTENT_DELETED: string;
+        CONTENT_CREATED: string;
+        CONTENT_UPDATED: string;
+        CONTENT_FETCHED: string;
+    };
+};
