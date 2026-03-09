@@ -1,25 +1,3 @@
-// import { ApiProperty } from '@nestjs/swagger';
-
-// export class CreateContentDto {
-//   @ApiProperty({ example: 'homepage-banner', description: 'Slug' })
-//   slug: string;
-
-//   @ApiProperty({ example: 'Welcome Banner', description: 'Title' })
-//   title: string;
-
-//   @ApiProperty({ example: 'BANNER', description: 'Content Type' })
-//   contentType: string;
-
-//   @ApiProperty({ example: 1, description: 'Priority' })
-//   priority: number;
-
-//   @ApiProperty({ example: true, description: 'Is Featured' })
-//   isFeatured: boolean;
-
-//   @ApiProperty({ example: 1, description: 'Status' })
-//   status: number;
-// }
-
 import {
   IsBoolean,
   IsInt,

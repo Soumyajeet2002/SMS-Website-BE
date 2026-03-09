@@ -18,6 +18,7 @@ const swagger_1 = require("@nestjs/swagger");
 const content_service_service_1 = require("./content-service.service");
 const create_content_dto_1 = require("./dto/create-content.dto");
 const query_contents_dto_1 = require("./dto/query-contents.dto");
+const update_content_dto_1 = require("./dto/update-content.dto");
 let ContentController = class ContentController {
     contentService;
     constructor(contentService) {
@@ -31,6 +32,12 @@ let ContentController = class ContentController {
     }
     async getContent(id) {
         return this.contentService.executeByActionType('findOne', id);
+    }
+    async updateContent(id, dto) {
+        return this.contentService.executeByActionType('update', id, dto);
+    }
+    deleteContent(id) {
+        return this.contentService.executeByActionType('remove', id);
     }
 };
 exports.ContentController = ContentController;
@@ -59,6 +66,23 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ContentController.prototype, "getContent", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access-token'),
+    (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_content_dto_1.UpdateContentDto]),
+    __metadata("design:returntype", Promise)
+], ContentController.prototype, "updateContent", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('access-token'),
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ContentController.prototype, "deleteContent", null);
 exports.ContentController = ContentController = __decorate([
     (0, common_1.Controller)('contents'),
     __metadata("design:paramtypes", [content_service_service_1.ContentService])

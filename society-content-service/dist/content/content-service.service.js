@@ -32,6 +32,7 @@ let ContentService = ContentService_1 = class ContentService {
             create: this._createContentSql.bind(this),
             findAll: this._findAllSql.bind(this),
             findOne: this._findOneSql.bind(this),
+            update: this._updateContentSql.bind(this),
             remove: this._removeContentSql.bind(this),
         };
         const method = methodMap[fn];
@@ -132,7 +133,7 @@ let ContentService = ContentService_1 = class ContentService {
     async _removeContentSql(contentId) {
         try {
             await this._findOneSql(contentId);
-            await this.sqlRepo.delete({ contentId });
+            await this.sqlRepo.update({ contentId }, { status: 2 });
             return {
                 message: specific_msg_1.CONTENT.SUCCESS.CONTENT_DELETED,
             };
@@ -142,9 +143,42 @@ let ContentService = ContentService_1 = class ContentService {
                 this.logger.error({
                     error: error.message,
                     stack: error.stack,
+                    payload: contentId,
                 });
             }
             throw new common_1.InternalServerErrorException(specific_msg_1.CONTENT.ERRORS.DELETE_FAILED);
+        }
+    }
+    async _updateContentSql(id, dto, req) {
+        try {
+            delete dto.createdBy;
+            delete dto.createdAt;
+            const isPresent = await this._findOneSql(id);
+            if (!isPresent) {
+                throw new common_1.NotFoundException(specific_msg_1.CONTENT.ERRORS.CONTENT_NOT_FOUND);
+            }
+            await this.sqlRepo.update(id, {
+                ...dto,
+                updatedBy: req?.id ?? req?.userId,
+            });
+            const updatedData = await this._findOneSql(id);
+            return {
+                message: specific_msg_1.CONTENT.SUCCESS.CONTENT_UPDATED,
+                data: updatedData.data,
+            };
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            if (error instanceof Error) {
+                this.logger.error({
+                    error: error.message,
+                    stack: error.stack,
+                    payload: { id, dto },
+                });
+            }
+            throw new common_1.InternalServerErrorException(specific_msg_1.CONTENT.ERRORS.UPDATE_FAILED);
         }
     }
 };
