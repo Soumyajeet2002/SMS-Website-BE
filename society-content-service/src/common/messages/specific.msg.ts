@@ -183,3 +183,23 @@ export const CONTENT = {
     CONTENT_FETCHED: 'Content fetched successfully',
   },
 };
+
+//
+export const GUEST_USERS = {
+  SUCCESS: {
+    GUEST_USER_CREATED: 'Guest user created successfully',
+    GUEST_USER_FETCHED: 'Guest user fetched successfully',
+    GUEST_USER_UPDATED: 'Guest user updated successfully',
+    GUEST_USER_DELETED: 'Guest user deleted successfully',
+  },
+
+  ERRORS: {
+    CREATE_FAILED: 'Failed to create guest user',
+    FETCH_FAILED: 'Failed to fetch guest user',
+    UPDATE_FAILED: 'Failed to update guest user',
+    DELETE_FAILED: 'Failed to delete guest user',
+
+    INVALID_GUEST_USER_ID: 'Invalid guest user id',
+    GUEST_USER_NOT_FOUND: 'Guest user not found',
+  },
+};

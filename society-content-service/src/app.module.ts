@@ -12,6 +12,7 @@ import { SecureSecretsService } from './common/services/secure-secret.service';
 import { JwtAuthGuard } from './common/security/guards/jwt-auth.guard';
 import { RolesGuard } from './common/security/guards/role.guard';
 import { ContentModule } from './content/content-service.module';
+import { GuestUsersModule } from './guest_users/guest-users.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ContentModule } from './content/content-service.module';
     DatabaseModule,
     CommuteModule,
     ContentModule,
+    GuestUsersModule,
   ],
   providers: [
     JwtStrategy,
