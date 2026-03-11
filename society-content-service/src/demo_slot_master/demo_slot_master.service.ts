@@ -66,7 +66,7 @@ export class DemoSlotMasterService {
       });
 
       if (existingSlot) {
-        throw new ConflictException('Duplicate time slots');
+        throw new ConflictException(DEMO_SLOT_MASTER.ERRORS.DUPLICATE_SLOT);
       }
 
       const entity = this.sqlRepo.create({

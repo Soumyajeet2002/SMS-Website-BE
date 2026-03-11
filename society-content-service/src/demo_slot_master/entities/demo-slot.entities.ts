@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  BeforeUpdate,
+  BeforeInsert,
 } from 'typeorm';
 
 /**
@@ -38,6 +40,15 @@ export class DemoSlotMasterEntity {
 
   @Column({ name: 'duration_minutes', type: 'int' })
   durationMinutes: number;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  calculateDuration() {
+    const start = new Date(`1970-01-01T${this.startTime}`);
+    const end = new Date(`1970-01-01T${this.endTime}`);
+
+    this.durationMinutes = (end.getTime() - start.getTime()) / 60000;
+  }
 
   /**
    * Status Field

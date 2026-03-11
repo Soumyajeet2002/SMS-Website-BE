@@ -14,6 +14,7 @@ import { RolesGuard } from './common/security/guards/role.guard';
 import { ContentModule } from './content/content-service.module';
 import { GuestUsersModule } from './guest_users/guest-users.module';
 import { DemoSlotMasterModule } from './demo_slot_master/demo_slot_master.module';
+import { DemoSlotScheduleModule } from './demo_slot_schedule/demo_slot_schedule.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { DemoSlotMasterModule } from './demo_slot_master/demo_slot_master.module
     ContentModule,
     GuestUsersModule,
     DemoSlotMasterModule,
+    DemoSlotScheduleModule,
   ],
   providers: [
     JwtStrategy,

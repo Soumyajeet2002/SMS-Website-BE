@@ -63,7 +63,7 @@ export class GuestUsersService {
       });
 
       if (existingSlot) {
-        throw new ConflictException('Duplicate mobile number');
+        throw new ConflictException(GUEST_USERS.ERRORS.DUPLICATE_GUEST_USER);
       }
 
       const entity = this.sqlRepo.create({

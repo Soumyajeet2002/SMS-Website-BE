@@ -5,9 +5,11 @@ import {
   IsInt,
   Min,
   Max,
+  IsIn,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SlotStatus } from '../entities/demo-slot.entities';
+import { DEMO_SLOT_MASTER } from 'src/common/messages/specific.msg';
 
 export class CreateDemoSlotDto {
   @ApiProperty({
@@ -34,13 +36,13 @@ export class CreateDemoSlotDto {
   @IsNotEmpty()
   endTime: string;
 
-  @ApiProperty({
-    description: 'Duration of the slot in minutes',
-    example: 60,
-  })
-  @IsInt()
-  @Min(1)
-  durationMinutes: number;
+  // @ApiProperty({
+  //   description: 'Duration of the slot in minutes',
+  //   example: 60,
+  // })
+  // @IsInt()
+  // @Min(1)
+  // durationMinutes: number;
 
   @ApiPropertyOptional({
     description: 'Status of the demo slot (0=Inactive, 1=Active, 2=Deleted)',
@@ -48,9 +50,10 @@ export class CreateDemoSlotDto {
     default: SlotStatus.ACTIVE,
   })
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(2)
+  @IsInt({ message: DEMO_SLOT_MASTER.ERRORS.SLOT_INTEGER })
+  // @Min(0)
+  // @Max(2)
+  @IsIn([0, 1, 2], { message: DEMO_SLOT_MASTER.ERRORS.SLOT_INVALID })
   status?: SlotStatus;
 
   // @ApiPropertyOptional({

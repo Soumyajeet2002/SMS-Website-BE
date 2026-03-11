@@ -201,6 +201,7 @@ export const GUEST_USERS = {
 
     INVALID_GUEST_USER_ID: 'Invalid guest user id',
     GUEST_USER_NOT_FOUND: 'Guest user not found',
+    DUPLICATE_GUEST_USER: 'mobile number already exists',
   },
 };
 export const DEMO_SLOT_MASTER = {
@@ -218,5 +219,9 @@ export const DEMO_SLOT_MASTER = {
     FETCH_FAILED: 'Failed to fetch demo slot(s).',
     INVALID_SLOT_ID: 'Invalid demo slot ID provided.',
     SLOT_NOT_FOUND: 'Demo slot not found.',
+    DUPLICATE_SLOT: 'Demo slot already exists.',
+    SLOT_INTEGER: 'Only integers are allowed.',
+    // SLOT_INVALID: 'Status must be 0 (Inactive), 1 (Active), or 2 (Deleted).',
+    SLOT_INVALID: 'Invalid status only int.',
   },
 };
