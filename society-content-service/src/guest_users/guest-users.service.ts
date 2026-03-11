@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -54,6 +55,17 @@ export class GuestUsersService {
     try {
       const guestId = randomUUID();
 
+      //
+      const existingSlot = await this.sqlRepo.findOne({
+        where: {
+          mobileNo: dto.mobileNo,
+        },
+      });
+
+      if (existingSlot) {
+        throw new ConflictException('Duplicate mobile number');
+      }
+
       const entity = this.sqlRepo.create({
         guestId: guestId,
         ...dto,
@@ -72,6 +84,9 @@ export class GuestUsersService {
       };
     } catch (error) {
       this.logger.error('Create Guest User Failed', error);
+      if (error instanceof ConflictException) {
+        throw error;
+      }
 
       throw new InternalServerErrorException(GUEST_USERS.ERRORS.CREATE_FAILED);
     }

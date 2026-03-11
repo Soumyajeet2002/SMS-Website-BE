@@ -41,18 +41,18 @@ export class CreateGuestUserDto {
     description: 'City where the guest user is located',
     example: 'Bhubaneswar',
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   city?: string;
 
   @ApiPropertyOptional({
-    description: 'Description of the guest user project or requirement',
+    description: 'description of the guest user project or requirement',
     example:
       'Looking for society management software for a residential complex',
   })
   @IsOptional()
   @IsString()
-  Description?: string;
+  projectDescription?: string;
 
   // @ApiPropertyOptional({
   //   description:

@@ -13,6 +13,7 @@ import { JwtAuthGuard } from './common/security/guards/jwt-auth.guard';
 import { RolesGuard } from './common/security/guards/role.guard';
 import { ContentModule } from './content/content-service.module';
 import { GuestUsersModule } from './guest_users/guest-users.module';
+import { DemoSlotMasterModule } from './demo_slot_master/demo_slot_master.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { GuestUsersModule } from './guest_users/guest-users.module';
     CommuteModule,
     ContentModule,
     GuestUsersModule,
+    DemoSlotMasterModule,
   ],
   providers: [
     JwtStrategy,

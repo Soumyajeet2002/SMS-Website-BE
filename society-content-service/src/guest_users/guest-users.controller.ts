@@ -36,7 +36,7 @@ export class GuestUsersController {
   // Public create endpoint
   @ApiOperation({ summary: 'Create a new guest user Public' })
   @Public()
-  @Post('public')
+  @Post('book-demo')
   // create(@Body() data: CreateGuestUserDto, @Req() req: any) {
   createPublic(@Body() data: CreateGuestUserDto, @Req() req: any) {
     return this.guestUsersService.executeByActionType('create', data, req);

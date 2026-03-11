@@ -11,7 +11,7 @@ export const guestUserResMapperSql = (data: GuestUserEntity) => ({
   status: data.status,
   metadata: data.metadata,
   // createdBy: data.createdBy,
-  // createdAt: data.createdAt,
+  createdAt: data.createdAt,
   // updatedBy: data.updatedBy,
-  // updatedAt: data.updatedAt,
+  updatedAt: data.updatedAt,
 });

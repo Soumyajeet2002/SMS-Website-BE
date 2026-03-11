@@ -203,3 +203,20 @@ export const GUEST_USERS = {
     GUEST_USER_NOT_FOUND: 'Guest user not found',
   },
 };
+export const DEMO_SLOT_MASTER = {
+  SUCCESS: {
+    SLOT_CREATED: 'Demo slot created successfully.',
+    SLOT_UPDATED: 'Demo slot updated successfully.',
+    SLOT_DELETED: 'Demo slot deleted successfully.',
+    SLOT_FETCHED: 'Demo slot fetched successfully.',
+    SLOTS_FETCHED: 'Demo slots fetched successfully.',
+  },
+  ERRORS: {
+    CREATE_FAILED: 'Failed to create demo slot.',
+    UPDATE_FAILED: 'Failed to update demo slot.',
+    DELETE_FAILED: 'Failed to delete demo slot.',
+    FETCH_FAILED: 'Failed to fetch demo slot(s).',
+    INVALID_SLOT_ID: 'Invalid demo slot ID provided.',
+    SLOT_NOT_FOUND: 'Demo slot not found.',
+  },
+};
