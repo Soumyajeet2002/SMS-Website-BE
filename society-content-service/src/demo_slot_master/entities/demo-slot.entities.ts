@@ -46,6 +46,9 @@ export class DemoSlotMasterEntity {
   calculateDuration() {
     const start = new Date(`1970-01-01T${this.startTime}`);
     const end = new Date(`1970-01-01T${this.endTime}`);
+    if (end < start) {
+      end.setDate(end.getDate() + 1); // move to next day
+    }
 
     this.durationMinutes = (end.getTime() - start.getTime()) / 60000;
   }

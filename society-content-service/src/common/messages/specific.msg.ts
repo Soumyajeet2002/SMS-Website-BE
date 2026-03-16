@@ -225,3 +225,22 @@ export const DEMO_SLOT_MASTER = {
     SLOT_INVALID: 'Invalid status only int.',
   },
 };
+
+export const DEMO_SLOT_SCHEDULE = {
+  SUCCESS: {
+    SCHEDULE_CREATED: 'Demo slot schedule created successfully.',
+    SCHEDULE_UPDATED: 'Demo slot schedule updated successfully.',
+    SCHEDULE_DELETED: 'Demo slot schedule deleted successfully.',
+    SCHEDULE_FETCHED: 'Demo slot schedule fetched successfully.',
+    SCHEDULES_FETCHED: 'Demo slot schedules fetched successfully.',
+  },
+  ERRORS: {
+    CREATE_FAILED: 'Failed to create demo slot schedule.',
+    UPDATE_FAILED: 'Failed to update demo slot schedule.',
+    DELETE_FAILED: 'Failed to delete demo slot schedule.',
+    FETCH_FAILED: 'Failed to fetch demo slot schedule(s).',
+    INVALID_SCHEDULE_ID: 'Invalid demo slot schedule ID provided.',
+    SCHEDULE_NOT_FOUND: 'Demo slot schedule not found.',
+    DUPLICATE_SCHEDULE: 'Demo slot schedule already exists.',
+  },
+};

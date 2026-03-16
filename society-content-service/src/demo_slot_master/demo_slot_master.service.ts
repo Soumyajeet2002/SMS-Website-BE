@@ -149,7 +149,7 @@ export class DemoSlotMasterService {
 
     try {
       const slot = await this.sqlRepo.findOne({
-        where: { slotId: id, status: SlotStatus.ACTIVE },
+        where: { slotId: id },
       });
 
       if (!slot) {

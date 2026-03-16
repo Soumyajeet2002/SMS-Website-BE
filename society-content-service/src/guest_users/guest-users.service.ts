@@ -71,12 +71,14 @@ export class GuestUsersService {
         ...dto,
         createdBy: guestId,
       });
+
       // const entity = this.sqlRepo.create({
       //   ...dto,
       //   createdBy: '550e8400-e29b-41d4-a716-446655440000',
       // });
 
       const saved = await this.sqlRepo.save(entity);
+      console.log('Saved Guest User:', saved);
 
       return {
         message: GUEST_USERS.SUCCESS.GUEST_USER_CREATED,
