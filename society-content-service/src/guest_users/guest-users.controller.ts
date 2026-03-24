@@ -61,8 +61,7 @@ export class GuestUsersController {
   }
 
   /** Update Guest User */
-  // @ApiBearerAuth('access-token')
-  @Public()
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update guest user by ID' })
   @Patch(':id')
   update(
@@ -77,8 +76,8 @@ export class GuestUsersController {
   }
 
   /** Soft Delete Guest User */
-  // @ApiBearerAuth('access-token')
-  @Public()
+  @ApiBearerAuth('access-token')
+  // @Public()
   @ApiOperation({ summary: 'Delete guest user by ID ' })
   @Delete(':id')
   remove(@Param('id') id: string) {

@@ -14,7 +14,7 @@ import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { DemoSlotScheduleService } from './demo_slot_schedule.service';
 
-import { Public } from 'src/common/decorators/public.decorator';
+// import { Public } from 'src/common/decorators/public.decorator';
 import { CreateSlotScheduleDto } from './dto/create-slot.dto';
 import { GetScheduleQueryDto } from './dto/query-slot.dto';
 import { UpdateSlotScheduleDto } from './dto/update-slot.dto';
@@ -26,10 +26,18 @@ export class DemoSlotScheduleController {
 
   /** Create Slot Schedule */
   @ApiOperation({ summary: 'Create a slot schedule' })
-  @Public()
+  // @Public()
+  @ApiBearerAuth('access-token')
   @Post()
   create(@Body() dto: CreateSlotScheduleDto, @Req() req: any) {
     return this.demoSlotScheduleService.executeByActionType('create', dto, req);
+  }
+
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get booked slots by demoBy and date' })
+  @Get('slots-status')
+  getBookedSlots(@Query('demoBy') demoBy: string, @Query('date') date: string) {
+    return this.demoSlotScheduleService.getBookedSlots(demoBy, date);
   }
 
   /** Get All Slot Schedules */
@@ -49,7 +57,8 @@ export class DemoSlotScheduleController {
   }
 
   /** Update Slot Schedule */
-  @Public()
+  // @Public()
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update slot schedule by ID' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateSlotScheduleDto) {
@@ -57,7 +66,8 @@ export class DemoSlotScheduleController {
   }
 
   /** Delete Slot Schedule (Soft Delete) */
-  @Public()
+  // @Public()
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete slot schedule by ID' })
   @Delete(':id')
   remove(@Param('id') id: string) {

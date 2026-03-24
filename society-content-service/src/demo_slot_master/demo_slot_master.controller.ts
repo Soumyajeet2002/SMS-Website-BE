@@ -17,7 +17,7 @@ import { CreateDemoSlotDto } from './dto/create-demo-slot.dto';
 import { UpdateDemoSlotDto } from './dto/update-demo-slot.dto';
 import { QueryDemoSlotDto } from './dto/query-demo-slot.dto';
 
-import { Public } from 'src/common/decorators/public.decorator';
+// import { Public } from 'src/common/decorators/public.decorator';
 
 @ApiTags('Demo Slot Master')
 @Controller('demo-slot-master')
@@ -26,7 +26,8 @@ export class DemoSlotMasterController {
 
   /** Create Demo Slot (Public) */
   @ApiOperation({ summary: 'Create a new demo slot (Public)' })
-  @Public()
+  // @Public()
+  @ApiBearerAuth('access-token')
   @Post('demo-slot')
   createPublic(@Body() data: CreateDemoSlotDto, @Req() req: any) {
     return this.demoSlotMasterService.executeByActionType('create', data, req);
@@ -49,7 +50,8 @@ export class DemoSlotMasterController {
   }
 
   /** Update Demo Slot */
-  @Public()
+  // @Public()
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update demo slot by ID' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDto: UpdateDemoSlotDto) {
@@ -61,7 +63,8 @@ export class DemoSlotMasterController {
   }
 
   /** Soft Delete Demo Slot */
-  @Public()
+  // @Public()
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete demo slot by ID' })
   @Delete(':id')
   remove(@Param('id') id: string) {

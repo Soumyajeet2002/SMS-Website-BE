@@ -1,5 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumberString, IsIn } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumberString,
+  IsIn,
+  IsEnum,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+import { BookingStatus } from '../../demo_bookings/entities/demo_booking.entities';
 
 export class QueryGuestUserDto {
   @ApiPropertyOptional({
@@ -46,4 +55,13 @@ export class QueryGuestUserDto {
   @IsOptional()
   @IsIn(['ASC', 'DESC'])
   sortOrder?: 'ASC' | 'DESC';
+
+  @ApiPropertyOptional({
+    description: 'search with booking status',
+    example: '1',
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsEnum(BookingStatus)
+  bookingStatus?: BookingStatus;
 }

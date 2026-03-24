@@ -15,6 +15,7 @@ import { ContentModule } from './content/content-service.module';
 import { GuestUsersModule } from './guest_users/guest-users.module';
 import { DemoSlotMasterModule } from './demo_slot_master/demo_slot_master.module';
 import { DemoSlotScheduleModule } from './demo_slot_schedule/demo_slot_schedule.module';
+import { DemoSlotBookingModule } from './demo_bookings/demo_booking.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { DemoSlotScheduleModule } from './demo_slot_schedule/demo_slot_schedule.
     GuestUsersModule,
     DemoSlotMasterModule,
     DemoSlotScheduleModule,
+    DemoSlotBookingModule,
   ],
   providers: [
     JwtStrategy,

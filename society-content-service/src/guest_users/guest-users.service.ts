@@ -13,15 +13,22 @@ import { Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 import { randomUUID } from 'crypto';
 
-import { GuestUserEntity } from './entities/guest-users.entities';
+import {
+  BookingStatusGuest,
+  GuestUserEntity,
+} from './entities/guest-users.entities';
 
 import { CreateGuestUserDto } from './dto/create-guest-user.dto';
 import { UpdateGuestUserDto } from './dto/update-guest-user.dto';
 import { QueryGuestUserDto } from './dto/query-guest-user.dto';
 
 import { guestUserResMapperSql } from './mapper/guest-users.response.mapper';
+import { guestUserGetAllResMapperSql } from './mapper/guest-user.getAllresponse.mapper';
 
 import { GUEST_USERS } from 'src/common/messages/specific.msg';
+import { BookingStatus } from '../demo_bookings/entities/demo_booking.entities';
+import { DemoSlotBookingEntity } from '../demo_bookings/entities/demo_booking.entities';
+import { In } from 'typeorm';
 
 @Injectable()
 export class GuestUsersService {
@@ -30,6 +37,8 @@ export class GuestUsersService {
   constructor(
     @InjectRepository(GuestUserEntity)
     private readonly sqlRepo: Repository<GuestUserEntity>,
+    @InjectRepository(DemoSlotBookingEntity)
+    private readonly bookingRepo: Repository<DemoSlotBookingEntity>,
   ) {}
 
   executeByActionType(fn: string, ...args: any[]) {
@@ -80,6 +89,12 @@ export class GuestUsersService {
       const saved = await this.sqlRepo.save(entity);
       console.log('Saved Guest User:', saved);
 
+      await this.bookingRepo.save({
+        guestId: saved.guestId,
+        bookingStatus: BookingStatusGuest.PENDING, // default 0
+        createdBy: saved.guestId,
+      });
+
       return {
         message: GUEST_USERS.SUCCESS.GUEST_USER_CREATED,
         data: guestUserResMapperSql(saved),
@@ -112,6 +127,18 @@ export class GuestUsersService {
         );
       }
 
+      if (query.bookingStatus !== undefined) {
+        qb.leftJoin(
+          DemoSlotBookingEntity,
+          'booking',
+          'booking.guest_id = guestUser.guestId',
+        );
+
+        qb.andWhere('booking.booking_status = :bookingStatus', {
+          bookingStatus: query.bookingStatus,
+        });
+      }
+
       /** Pagination */
       const page = Number(query.page) || 1;
       const limit = Number(query.limit) || 10;
@@ -131,13 +158,48 @@ export class GuestUsersService {
 
       const [data, total] = await qb.getManyAndCount();
 
+      /** Left join with booking table to compute bookingStatus dynamically */
+      const guests = await qb.getMany();
+
+      // Fetch booking status for each guest
+
+      // console.log('Guests:', guests);
+      const guestIds = guests.map((g) => g.guestId);
+      const bookings = await this.bookingRepo.find({
+        where: {
+          guestId: In(guestIds),
+          bookingStatus: BookingStatusGuest.BOOKED,
+        },
+
+        select: ['guestId', 'bookingStatus'],
+      });
+      console.log('Bookings:', bookings);
+      // const bookedGuestIds = new Set(bookings.map((b) => b.guestId));
+
+      // Map response with dynamic bookingStatus
+      // const result = guests.map((guest) => {
+      //   const guestRes = guestUserResMapperSql(guest);
+      //   return {
+      //     ...guestRes,
+      //     bookingStatus: bookedGuestIds.has(guest.guestId) ? 1 : 0,
+      //   };
+      // });
+
+      const bookingMap = new Map(
+        bookings.map((b) => [b.guestId, b.bookingStatus]),
+      );
+
+      const result = data.map((guest) =>
+        guestUserGetAllResMapperSql(guest, bookingMap),
+      );
+
       return {
         message: GUEST_USERS.SUCCESS.GUEST_USER_FETCHED,
         page,
         limit,
         total,
         totalPages: Math.ceil(total / limit),
-        data: data.map(guestUserResMapperSql),
+        data: result,
       };
     } catch (error) {
       this.logger.error('Fetch Guest Users Failed', error);
@@ -177,7 +239,7 @@ export class GuestUsersService {
   }
 
   /** Update Guest User */
-  async _updateSql(id: string, dto: UpdateGuestUserDto) {
+  async _updateSql(id: string, dto: Partial<UpdateGuestUserDto>) {
     try {
       delete (dto as any).createdBy;
       delete (dto as any).createdAt;

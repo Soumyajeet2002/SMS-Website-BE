@@ -1,6 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsUUID, IsString, IsNumber, IsIn } from 'class-validator';
+import {
+  IsOptional,
+  IsUUID,
+  IsString,
+  IsNumber,
+  IsIn,
+  IsInt,
+} from 'class-validator';
 import { Type } from 'class-transformer';
+import { SlotScheduleStatus } from '../entities/slot-schedule.entities';
 
 export class GetScheduleQueryDto {
   @ApiPropertyOptional({
@@ -64,4 +72,11 @@ export class GetScheduleQueryDto {
   @IsOptional()
   @IsIn(['ASC', 'DESC'])
   sortOrder?: 'ASC' | 'DESC' = 'DESC';
+
+  @ApiPropertyOptional({
+    description: 'Status of slot schedule [0=Inactive, 1=Active, 2=Deleted]',
+    example: 1,
+  })
+  @IsOptional()
+  status?: SlotScheduleStatus;
 }

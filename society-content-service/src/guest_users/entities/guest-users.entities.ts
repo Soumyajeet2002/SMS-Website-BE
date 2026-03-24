@@ -71,6 +71,14 @@ export enum GuestUserStatus {
   DELETED = 2,
 }
 
+export enum BookingStatusGuest {
+  PENDING = 0,
+  BOOKED = 1,
+  COMPLETED = 2,
+  CANCELLED = 3,
+  NO_SHOW = 4,
+}
+
 @Entity({ name: 'guest_users', schema: 'society_cms' })
 /* Helpful index for filtering */
 @Index('idx_guest_users_status', ['status'])

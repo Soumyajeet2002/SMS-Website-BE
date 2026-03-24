@@ -6,6 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { In } from 'typeorm';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,7 +17,10 @@ import {
   SlotScheduleStatus,
 } from './entities/slot-schedule.entities';
 import { DEMO_SLOT_SCHEDULE } from '../common/messages/specific.msg';
-import { DemoSlotMasterEntity } from '../demo_slot_master/entities/demo-slot.entities';
+import {
+  DemoSlotMasterEntity,
+  SlotStatus,
+} from '../demo_slot_master/entities/demo-slot.entities';
 import { ConflictException } from '@nestjs/common';
 import { CreateSlotScheduleDto } from './dto/create-slot.dto';
 import { GetScheduleQueryDto } from './dto/query-slot.dto';
@@ -25,6 +29,10 @@ import { CreateSlotScheduleResponseDto } from './dto/create-slot-schedule-respon
 import { Not } from 'typeorm';
 import { UserSqlEntity } from '@sms/db-entities';
 import { UpdateSlotScheduleDto } from './dto/update-slot.dto';
+import { Between } from 'typeorm';
+
+import { DemoSlotBookingEntity } from '../demo_bookings/entities/demo_booking.entities';
+import { BookingStatusGuest } from '../guest_users/entities/guest-users.entities';
 
 @Injectable()
 export class DemoSlotScheduleService {
@@ -36,6 +44,9 @@ export class DemoSlotScheduleService {
 
     @InjectRepository(DemoSlotMasterEntity)
     private readonly slotRepo: Repository<DemoSlotMasterEntity>,
+
+    @InjectRepository(DemoSlotBookingEntity)
+    private readonly bookingRepo: Repository<DemoSlotBookingEntity>,
   ) {}
   executeByActionType(fn: string, ...args: any[]) {
     const methodMap: Record<string, (...args: any[]) => Promise<unknown>> = {
@@ -44,6 +55,7 @@ export class DemoSlotScheduleService {
       findOne: this._findOneSchedule.bind(this),
       update: this._updateSchedule.bind(this),
       remove: this._removeSchedule.bind(this),
+      // get: this._getAvailableSlots.bind(this),
     };
     const method = methodMap[fn];
 
@@ -77,6 +89,7 @@ export class DemoSlotScheduleService {
           where: {
             slotDate: dto.slotDate,
             slot: { slotId: slotItem.slotId },
+            demoBy: dto.demoBy,
             status: Not(SlotScheduleStatus.DELETED),
           },
         });
@@ -126,17 +139,40 @@ export class DemoSlotScheduleService {
   //   try {
   //     const qb = this.sqlRepo
   //       .createQueryBuilder('schedule')
-  //       .leftJoinAndSelect('schedule.slot', 'slot');
+  //       .leftJoinAndSelect('schedule.slot', 'slot')
+  //       .leftJoin(
+  //         (qb) =>
+  //           qb
+  //             .select('u.id', 'id')
+  //             .addSelect('u.name', 'name')
+  //             .from('identity.users', 'u'),
+  //         'usr',
+  //         'usr.id = schedule.demoBy',
+  //       )
+  //       .addSelect('usr.name', 'demoByName');
 
   //     qb.where('schedule.status != :deleted', {
   //       deleted: SlotScheduleStatus.DELETED,
   //     });
 
   //     /** Filter by demoBy */
+  //     // if (query.demoBy) {
+  //     //   qb.andWhere('schedule.demoBy = :demoBy', {
+  //     //     demoBy: query.demoBy,
+  //     //   });
+  //     // }
+
+  //     // by name
   //     if (query.demoBy) {
-  //       qb.andWhere('schedule.demoBy = :demoBy', {
-  //         demoBy: query.demoBy,
-  //       });
+  //       if (isUUID(query.demoBy)) {
+  //         qb.andWhere('schedule.demoBy = :demoBy', {
+  //           demoBy: query.demoBy,
+  //         });
+  //       } else {
+  //         qb.andWhere('usr.name ILIKE :demoBy', {
+  //           demoBy: `%${query.demoBy}%`,
+  //         });
+  //       }
   //     }
 
   //     /** Filter by date */
@@ -163,8 +199,20 @@ export class DemoSlotScheduleService {
 
   //     qb.orderBy(`schedule.${sortBy}`, sortOrder as 'ASC' | 'DESC');
 
-  //     /** Fetch rows WITHOUT pagination */
-  //     const rows = await qb.getMany();
+  //     // ✅ Status filter (NEW)
+  //     if (query.status) {
+  //       qb.andWhere('schedule.status = :status', {
+  //         status: query.status,
+  //       });
+  //     }
+
+  //     /** Fetch rows */
+  //     const { entities, raw } = await qb.getRawAndEntities();
+
+  //     const rows = entities.map((entity, index) => ({
+  //       ...entity,
+  //       demoByName: raw[index]?.demoByName,
+  //     }));
 
   //     /** GROUP SLOTS BY slotDate + demoBy */
   //     const grouped: Record<string, any> = {};
@@ -174,9 +222,9 @@ export class DemoSlotScheduleService {
 
   //       if (!grouped[key]) {
   //         grouped[key] = {
-  //           scheduleId: row.scheduleId, // take first ID only
+  //           scheduleId: row.scheduleId,
   //           slotDate: row.slotDate,
-  //           demoBy: row.demoBy,
+  //           demoBy: row.demoByName ?? row.demoBy, // show name
   //           slots: [],
   //         };
   //       }
@@ -184,7 +232,8 @@ export class DemoSlotScheduleService {
   //       grouped[key].slots.push({
   //         slotId: row.slot?.slotId,
   //         slotName: row.slot?.slotName,
-  //         status: row.slot?.status,
+  //         // status: row.slot?.status,
+  //         status: row.status,
   //       });
   //     }
 
@@ -241,13 +290,6 @@ export class DemoSlotScheduleService {
         deleted: SlotScheduleStatus.DELETED,
       });
 
-      /** Filter by demoBy */
-      // if (query.demoBy) {
-      //   qb.andWhere('schedule.demoBy = :demoBy', {
-      //     demoBy: query.demoBy,
-      //   });
-      // }
-
       // by name
       if (query.demoBy) {
         if (isUUID(query.demoBy)) {
@@ -285,6 +327,13 @@ export class DemoSlotScheduleService {
 
       qb.orderBy(`schedule.${sortBy}`, sortOrder as 'ASC' | 'DESC');
 
+      // ✅ Status filter (existing)
+      if (query.status) {
+        qb.andWhere('schedule.status = :status', {
+          status: query.status,
+        });
+      }
+
       /** Fetch rows */
       const { entities, raw } = await qb.getRawAndEntities();
 
@@ -293,30 +342,38 @@ export class DemoSlotScheduleService {
         demoByName: raw[index]?.demoByName,
       }));
 
-      /** GROUP SLOTS BY slotDate + demoBy */
-      const grouped: Record<string, any> = {};
+      // ============================================================
+      // ✅ NEW: Fetch bookings where status = BOOKED (1)
+      // This will help us mark slot as inactive (0)
+      // ============================================================
+      const scheduleIds = rows.map((r) => r.scheduleId);
 
-      for (const row of rows) {
-        const key = `${row.slotDate}-${row.demoBy}`;
+      const bookedSchedules = await this.bookingRepo.find({
+        where: {
+          scheduleId: In(scheduleIds),
+          bookingStatus: BookingStatusGuest.BOOKED, // only booked
+        },
+        select: ['scheduleId'],
+      });
 
-        if (!grouped[key]) {
-          grouped[key] = {
-            scheduleId: row.scheduleId,
-            slotDate: row.slotDate,
-            demoBy: row.demoByName ?? row.demoBy, // show name
-            slots: [],
-          };
-        }
+      // Create quick lookup set
+      const datagrouped = rows.map((row) => ({
+        schedule_id: row.scheduleId,
 
-        grouped[key].slots.push({
-          slotId: row.slot?.slotId,
-          slotName: row.slot?.slotName,
-          status: row.slot?.status,
-        });
-      }
+        demoBy: row.demoByName ?? row.demoBy,
+        slot_date: row.slotDate,
+
+        slot_id: row.slot?.slotId,
+        slot_name: row.slot?.slotName,
+        start_time: row.slot?.startTime,
+        end_time: row.slot?.endTime,
+        SlotStatus: row.slot?.status,
+
+        schedule_status: row.status,
+      }));
 
       /** Convert grouped object to array */
-      let data = Object.values(grouped);
+      let data = Object.values(datagrouped);
 
       /** Total merged schedules */
       const total = data.length;
@@ -452,10 +509,10 @@ export class DemoSlotScheduleService {
       if (dto.slots) {
         const incomingSlotIds = dto.slots.map((s) => s.slotId);
 
-        // Soft-delete slots that are no longer in the request
+        // Soft-inactive
         for (const slotRow of existingSchedules) {
           if (!incomingSlotIds.includes(slotRow.slot.slotId)) {
-            slotRow.status = SlotScheduleStatus.DELETED;
+            slotRow.status = SlotScheduleStatus.INACTIVE;
             slotRow.updatedAt = new Date();
             await queryRunner.manager.save(slotRow);
           }
@@ -553,6 +610,63 @@ export class DemoSlotScheduleService {
       this.logger.error('Delete Slot Schedule Failed', error);
 
       throw new InternalServerErrorException('Failed to delete slot schedule');
+    }
+  }
+
+  async getBookedSlots(demoBy: string, date: string) {
+    try {
+      if (!demoBy || !date) {
+        throw new BadRequestException('demoBy and date are required');
+      }
+
+      const qb = this.sqlRepo
+        .createQueryBuilder('schedule')
+        .leftJoinAndSelect('schedule.slot', 'slot')
+        .leftJoin(
+          (qb) =>
+            qb
+              .select('u.id', 'id')
+              .addSelect('u.name', 'name')
+              .from('identity.users', 'u'),
+          'usr',
+          'usr.id = schedule.demoBy',
+        );
+
+      /** ✅ SAME LOGIC AS _findAllSchedules */
+      if (isUUID(demoBy)) {
+        qb.where('schedule.demoBy = :demoBy', { demoBy });
+      } else {
+        qb.where('usr.name ILIKE :demoBy', {
+          demoBy: `%${demoBy}%`,
+        });
+      }
+
+      /** ✅ Date filter */
+      qb.andWhere('schedule.slotDate = :date', { date });
+
+      /** ✅ Only active bookings */
+      qb.andWhere('schedule.status IN (:...statuses)', {
+        statuses: [SlotScheduleStatus.ACTIVE, SlotScheduleStatus.INACTIVE],
+      });
+
+      const bookedSlots = await qb.getMany();
+
+      return {
+        message: 'Booked slots fetched',
+        data: bookedSlots.map((s) => ({
+          slotId: s.slot.slotId,
+          slotName: s.slot.slotName,
+          startTime: s.slot.startTime,
+          endTime: s.slot.endTime,
+          status: s.status,
+        })),
+      };
+    } catch (error) {
+      this.logger.error('Fetch Booked Slots Failed', error);
+
+      if (error instanceof HttpException) throw error;
+
+      throw new InternalServerErrorException('Failed to fetch booked slots');
     }
   }
 }
