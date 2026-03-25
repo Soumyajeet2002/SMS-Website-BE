@@ -2,8 +2,6 @@ import {
   IsOptional,
   IsString,
   IsEmail,
-  // IsNumber,
-  // IsObject,
   IsNotEmpty,
   Matches,
 } from 'class-validator';
@@ -53,31 +51,4 @@ export class CreateGuestUserDto {
   @IsOptional()
   @IsString()
   projectDescription?: string;
-
-  // @ApiPropertyOptional({
-  //   description:
-  //     'Source from where the guest user arrived (Website, Referral, Ad, etc)',
-  //   example: 'Website',
-  // })
-  // @IsOptional()
-  // @IsString()
-  // source?: string;
-
-  // @ApiPropertyOptional({
-  //   description: 'Status of the guest user',
-  //   example: 1,
-  //   default: 1,
-  // })
-  // @IsOptional()
-  // @IsNumber()
-  // status?: number;
-
-  // @ApiPropertyOptional({
-  //   description: 'Additional metadata stored as JSON',
-  //   example: { form: 'website-form', device: 'website' },
-  //   type: Object,
-  // })
-  // @IsOptional()
-  // @IsObject()
-  // metadata?: Record<string, any>;
 }

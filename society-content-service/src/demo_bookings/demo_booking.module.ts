@@ -7,7 +7,6 @@ import { GuestUserEntity } from '../guest_users/entities/guest-users.entities';
 
 import { DemoSlotBookingService } from './demo_booking.service';
 import { DemoSlotBookingController } from './demo_booking.controller';
-import { GuestUsersModule } from '../guest_users/guest-users.module';
 
 @Module({
   imports: [
@@ -15,7 +14,6 @@ import { GuestUsersModule } from '../guest_users/guest-users.module';
       DemoSlotBookingEntity,
       DemoSlotScheduleEntity,
       GuestUserEntity,
-      GuestUsersModule,
     ]),
   ],
   controllers: [DemoSlotBookingController],

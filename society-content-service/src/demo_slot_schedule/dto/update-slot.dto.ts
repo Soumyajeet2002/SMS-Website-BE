@@ -13,6 +13,14 @@ import { SlotScheduleStatus } from '../entities/slot-schedule.entities';
 
 class SlotUpdateDto {
   @ApiPropertyOptional({
+    description: 'Schedule ID (required for update)',
+    example: '834321d6-59ae-4c05-95e4-e0cd85957842',
+  })
+  @IsOptional()
+  @IsUUID()
+  scheduleId: string; // 🔥 REQUIRED NOW
+
+  @ApiPropertyOptional({
     description: 'Slot ID',
     example: 'c195152b-8b85-4286-aedb-6746b3451d7e',
   })
@@ -33,7 +41,8 @@ class SlotUpdateDto {
   })
   @IsOptional()
   @IsInt()
-  status?: number;
+  @IsIn([0, 1, 2])
+  status?: SlotScheduleStatus;
 }
 
 export class UpdateSlotScheduleDto {
@@ -50,7 +59,7 @@ export class UpdateSlotScheduleDto {
     example: '2026-04-29',
   })
   @IsOptional()
-  @IsString()
+  @IsString() // (you can switch to @IsDateString if needed)
   slotDate?: string;
 
   @ApiPropertyOptional({

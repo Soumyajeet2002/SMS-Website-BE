@@ -44,15 +44,6 @@ export class DemoSlotBookingEntity {
   @Column({ name: 'meeting_link', type: 'text', nullable: true })
   meetingLink?: string;
 
-  // // Booking status
-  // @Column({
-  //   name: 'booking_status',
-  //   type: 'smallint',
-  //   default: BookingStatus.PENDING,
-  //   comment: '0=Pending,1=Booked,2=Completed,3=Cancelled,4=No Show',
-  // })
-  // bookingStatus: BookingStatus;
-
   // Booking status Guest
   @Column({
     name: 'booking_status',
@@ -60,11 +51,11 @@ export class DemoSlotBookingEntity {
     default: BookingStatus.PENDING,
     comment: '0=Pending,1=Booked,2=Completed,3=Cancelled,4=No Show',
   })
-  bookingStatus: BookingStatusGuest;
+  bookingStatus: BookingStatus;
 
   // Optional metadata
   @Column({ name: 'metadata', type: 'jsonb', nullable: true, default: '{}' })
-  metadata?: Record<string, any>;
+  metadata?: string;
 
   // Audit fields
   @Column({ name: 'created_by', type: 'uuid', nullable: true })

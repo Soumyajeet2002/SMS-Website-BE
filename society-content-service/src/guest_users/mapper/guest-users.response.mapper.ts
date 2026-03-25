@@ -1,6 +1,5 @@
 import { GuestUserEntity } from '../entities/guest-users.entities';
 
-// import { BookingStatus } from '../../demo_bookings/entities/demo_booking.entities';
 export const guestUserResMapperSql = (
   data: GuestUserEntity,
   bookingStatus?: number,
@@ -17,9 +16,5 @@ export const guestUserResMapperSql = (
     // You can assign any BookingStatus value you want here
     bookingStatus: bookingStatus, // example, can be PENDING, BOOKED, etc.
     metadata: data.metadata as Record<string, unknown>, // safe for ESLint
-    // createdBy: data.createdBy,
-    // createdAt: data.createdAt,
-    // updatedBy: data.updatedBy,
-    // updatedAt: data.updatedAt,
   };
 };

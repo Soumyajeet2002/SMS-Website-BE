@@ -14,10 +14,10 @@ import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { DemoSlotScheduleService } from './demo_slot_schedule.service';
 
-// import { Public } from 'src/common/decorators/public.decorator';
 import { CreateSlotScheduleDto } from './dto/create-slot.dto';
 import { GetScheduleQueryDto } from './dto/query-slot.dto';
 import { UpdateSlotScheduleDto } from './dto/update-slot.dto';
+import { DeleteScheduleDto } from './dto/delete.dto';
 
 @ApiTags('Demo Slot Schedule')
 @Controller('demo-slot-schedule')
@@ -60,17 +60,17 @@ export class DemoSlotScheduleController {
   // @Public()
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update slot schedule by ID' })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateSlotScheduleDto) {
-    return this.demoSlotScheduleService.executeByActionType('update', id, dto);
+  @Patch()
+  update(@Body() dto: UpdateSlotScheduleDto) {
+    return this.demoSlotScheduleService.executeByActionType('update', dto);
   }
 
   /** Delete Slot Schedule (Soft Delete) */
   // @Public()
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Delete slot schedule by ID' })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.demoSlotScheduleService.executeByActionType('remove', id);
+  @ApiOperation({ summary: 'Delete' })
+  @Delete()
+  remove(@Body() dto: DeleteScheduleDto) {
+    return this.demoSlotScheduleService.executeByActionType('remove', dto);
   }
 }

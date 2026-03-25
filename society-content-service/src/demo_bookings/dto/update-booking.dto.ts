@@ -2,51 +2,37 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsUUID,
   IsNotEmpty,
-  IsDateString,
   IsOptional,
   IsEnum,
   IsString,
+  IsObject,
 } from 'class-validator';
 import { BookingStatus } from '../entities/demo_booking.entities';
 
 export class UpdateBookingDto {
   @ApiProperty({
     description: 'Guest ID for booking',
-    example: '3f9c7939-7196-4797-8dfb-5b302504089f',
+    example: '45918264-4333-4ed4-8bda-a3040f3f0c62',
   })
-  @IsUUID()
-  @IsNotEmpty()
+  // @IsUUID()
+  // @IsNotEmpty()
+  @IsOptional()
+  @IsString()
   guestId: string;
 
   @ApiProperty({
-    description: 'DemoBy user ID',
-    example: '18877320-c822-4123-bda4-cbe97543f1db',
+    description: 'Schedule ID for booking',
+    example: '31589428-512d-4d0a-9d00-7ae5a1b03463',
   })
-  @IsString()
+  // @IsUUID()
   // @IsNotEmpty()
   @IsOptional()
-  demoBy?: string;
-
-  @ApiProperty({
-    description: 'Slot date (YYYY-MM-DD)',
-    example: '2026-01-02',
-  })
   @IsString()
-  // @IsNotEmpty()
-  @IsOptional()
-  slotDate: string;
+  scheduleId: string | null;
 
   @ApiProperty({
-    description: 'Slot ID',
-    example: '07e342c2-d585-4215-bfcf-eab87bb610cc',
-  })
-  @IsString()
-  // @IsNotEmpty()
-  @IsOptional()
-  slotId: string;
-
-  @ApiProperty({
-    description: 'Booking status',
+    description:
+      'Booking status (0=Pending,1=Booked,2=Completed,3=Rejected,4=No Show)',
     enum: BookingStatus,
     example: BookingStatus.BOOKED,
     required: false,
@@ -54,4 +40,22 @@ export class UpdateBookingDto {
   @IsOptional()
   @IsEnum(BookingStatus)
   bookingStatus?: BookingStatus;
+
+  @ApiProperty({
+    description: 'Meeting link for the booking',
+    example: 'https://meet.google.com/abc-xyz',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  meetingLink?: string;
+
+  @ApiProperty({
+    description: 'Additional metadata for booking',
+    example: 'Client prefers evening slot',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  metadata?: string;
 }

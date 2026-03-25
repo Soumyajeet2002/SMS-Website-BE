@@ -36,14 +36,6 @@ export class CreateDemoSlotDto {
   @IsNotEmpty()
   endTime: string;
 
-  // @ApiProperty({
-  //   description: 'Duration of the slot in minutes',
-  //   example: 60,
-  // })
-  // @IsInt()
-  // @Min(1)
-  // durationMinutes: number;
-
   @ApiPropertyOptional({
     description: 'Status of the demo slot (0=Inactive, 1=Active, 2=Deleted)',
     example: SlotStatus.ACTIVE,
@@ -51,16 +43,6 @@ export class CreateDemoSlotDto {
   })
   @IsOptional()
   @IsInt({ message: DEMO_SLOT_MASTER.ERRORS.SLOT_INTEGER })
-  // @Min(0)
-  // @Max(2)
   @IsIn([0, 1, 2], { message: DEMO_SLOT_MASTER.ERRORS.SLOT_INVALID })
   status?: SlotStatus;
-
-  // @ApiPropertyOptional({
-  //   description: 'Optional metadata for the demo slot stored as JSON',
-  //   example: { trainer: 'TEST', GMEET: 'googlemeetlink' },
-  //   type: Object,
-  // })
-  // @IsOptional()
-  // metadata?: Record<string, any>;
 }

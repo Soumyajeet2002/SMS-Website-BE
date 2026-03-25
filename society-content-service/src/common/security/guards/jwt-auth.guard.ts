@@ -20,10 +20,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    const isPublic = this.reflector.getAllAndOverride<boolean>(
-      IS_PUBLIC_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     const isOptionalAuth = this.reflector.getAllAndOverride<boolean>(
       IS_OPTIONAL_AUTH_KEY,
@@ -69,7 +69,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('Invalid or missing token');
     }
 
-    this.logger.debug(` Authenticated user ID: ${user?.id}`);
+    this.logger.debug(` Authenticated user ID: ${user?.userId}`);
     return user;
   }
 }

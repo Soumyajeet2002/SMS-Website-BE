@@ -1,15 +1,12 @@
 import {
   BadRequestException,
-  ConflictException,
   HttpException,
   Injectable,
   InternalServerErrorException,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not } from 'typeorm';
-import { isUUID } from 'class-validator';
+import { Repository } from 'typeorm';
 
 import {
   DemoSlotBookingEntity,
@@ -18,13 +15,11 @@ import {
 
 import { DemoSlotScheduleEntity } from '../demo_slot_schedule/entities/slot-schedule.entities';
 import { GuestUserEntity } from '../guest_users/entities/guest-users.entities';
-
-import { CreateSlotBookingDto } from './dto/create-booking.dto';
-// import { UpdateSlotBookingDto } from './dto/update-booking.dto';
 import { SlotScheduleStatus } from '../demo_slot_schedule/entities/slot-schedule.entities';
-import { BookingStatusGuest } from '../guest_users/entities/guest-users.entities';
+
 import { UpdateBookingDto } from './dto/update-booking.dto';
-import { GuestUsersService } from '../guest_users/guest-users.service';
+
+import { DEMO_SLOT_SCHEDULE } from '../common/messages/specific.msg';
 
 @Injectable()
 export class DemoSlotBookingService {
@@ -40,18 +35,15 @@ export class DemoSlotBookingService {
     @InjectRepository(GuestUserEntity)
     private readonly guestRepo: Repository<GuestUserEntity>,
 
-    private guestUsersService: GuestUsersService,
+    @InjectRepository(DemoSlotScheduleEntity)
+    private readonly sqlRepo: Repository<DemoSlotScheduleEntity>,
   ) {}
 
   executeByActionType(fn: string, ...args: any[]) {
     const methodMap: Record<string, (...args: any[]) => Promise<unknown>> = {
-      // create: this._createBooking.bind(this),
-      //   findAll: this._findAllBookings.bind(this),
-      //   findOne: this._findOneBooking.bind(this),
+      create: this._GetSlotDetails.bind(this),
       update: this._updateBooking.bind(this),
-      //   remove: this._removeBooking.bind(this),
     };
-
     const method = methodMap[fn];
 
     if (!method) {
@@ -61,198 +53,195 @@ export class DemoSlotBookingService {
     return method(...args);
   }
 
-  // async _updateBooking(dto: any, req?: any) {
-  //   try {
-  //     const {
-  //       guestId,
-  //       demoBy,
-  //       slotDate,
-  //       slotId,
-  //       bookingStatus,
-  //       meetingLink,
-  //       metadata,
-  //     } = dto;
-
-  //     // 1️⃣ Validate required fields
-  //     if (!guestId || !demoBy || !slotDate || !slotId) {
-  //       throw new BadRequestException(
-  //         'guestId, demoBy, slotDate, and slotId are required',
-  //       );
-  //     }
-
-  //     // 2️⃣ Find schedule by slotId + slotDate + demoBy
-  //     const schedule = await this.scheduleRepo
-  //       .createQueryBuilder('s')
-  //       .leftJoin('s.slot', 'slot')
-  //       .where('s.demoBy = :demoBy', { demoBy })
-  //       .andWhere('s.slotDate = :slotDate', { slotDate })
-  //       .andWhere('slot.slotId = :slotId', { slotId })
-  //       .andWhere('s.status = :status', { status: 1 }) // ACTIVE status
-  //       .getOne();
-
-  //     if (!schedule) {
-  //       throw new NotFoundException(`Schedule not found for slotId: ${slotId}`);
-  //     }
-
-  //     // 3️⃣ Find booking using guestId + scheduleId
-  //     let booking = await this.bookingRepo.findOne({
-  //       where: {
-  //         guestId: guestId,
-  //         // scheduleId: schedule.scheduleId,
-  //       },
-  //     });
-
-  //     // 4️⃣ If booking does not exist, create it (upsert behavior)
-  //     if (!booking) {
-  //       booking = await this.bookingRepo.save({
-  //         guestId,
-  //         scheduleId: schedule.scheduleId,
-  //         bookingStatus: bookingStatus ?? BookingStatus.BOOKED,
-  //         meetingLink: meetingLink ?? null,
-  //         metadata: metadata ?? null,
-  //         createdBy: req?.user?.userId ?? 'SYSTEM',
-  //         createdAt: new Date(),
-  //       });
-  //     } else {
-  //       // 5️⃣ Update booking fields if it exists
-  //       await this.bookingRepo.update(
-  //         { bookingId: booking.bookingId },
-  //         {
-  //           bookingStatus: bookingStatus ?? booking.bookingStatus,
-  //           meetingLink: meetingLink ?? booking.meetingLink,
-  //           metadata: metadata ?? booking.metadata,
-  //           updatedBy: req?.user?.userId ?? 'SYSTEM',
-  //           updatedAt: new Date(),
-  //         },
-  //       );
-  //     }
-  //     const response = {
-  //       message: 'Booking processed successfully',
-  //       data: {
-  //         guestId,
-  //         scheduleId: schedule.scheduleId,
-  //         bookingStatus: bookingStatus ?? booking.bookingStatus,
-  //       },
-  //     };
-  //     console.log(JSON.stringify(response, null, 2));
-
-  //     return {
-  //       message: 'Booking processed successfully',
-  //       data: {
-  //         guestId,
-  //         scheduleId: schedule.scheduleId,
-  //         bookingStatus: bookingStatus ?? booking.bookingStatus,
-  //       },
-  //     };
-  //   } catch (error) {
-  //     console.error('❌ ERROR:', error);
-
-  //     if (error instanceof HttpException) throw error;
-
-  //     throw new InternalServerErrorException(
-  //       error.message || 'Failed to update booking',
-  //     );
-  //   }
-  // }
-
-  async _updateBooking(dto: any, req?: any) {
+  async _GetSlotDetails(req?: any, demoBy?: string) {
     try {
-      const {
-        guestId, // mandatory
-        demoBy, //optional (status=2)
-        slotDate, //optionl (status=2)
-        slotId, //  optional(status=2)
-        bookingStatus, //mandatory
-        meetingLink, //optional
-        metadata, //optional
-      } = dto;
+      const userId = req?.user?.id;
 
-      // 1️⃣ Validate required fields
-      // if (!guestId || !demoBy || !slotDate || !slotId) {
-      //   throw new BadRequestException(
-      //     'guestId, demoBy, slotDate, and slotId are required',
-      //   );
-      // }
+      const qb = this.sqlRepo
+        .createQueryBuilder('schedule')
+        .leftJoinAndSelect('schedule.slot', 'slot')
+        .leftJoin(
+          (qb) =>
+            qb
+              .select('u.id', 'id')
+              .addSelect('u.name', 'name')
+              .from('identity.users', 'u'),
+          'usr',
+          'usr.id = schedule.demoBy',
+        )
+        .addSelect('usr.name', 'demoByName');
 
-      // 2️⃣ Validate bookingStatus (supports all enum values)
-      const validStatuses = Object.values(BookingStatus);
+      qb.addSelect((subQuery) => {
+        return subQuery
+          .select('1')
+          .from('society_cms.demo_bookings', 'b')
+          .where('b.schedule_id = schedule.schedule_id')
+          .limit(1);
+      }, 'is_booked');
+
+      qb.where('schedule.status != :deleted', {
+        deleted: SlotScheduleStatus.DELETED,
+      });
+
+      /** ✅ Optional: user-based filter */
+      if (userId) {
+        qb.andWhere('schedule.createdBy = :userId', {
+          userId,
+        });
+      }
+
+      /** ✅ Optional: filter by demoBy */
+      if (demoBy) {
+        qb.andWhere('schedule.demoBy = :demoBy', { demoBy });
+      }
+
+      /** ✅ Default sorting */
+      qb.orderBy('schedule.createdAt', 'DESC');
+
+      /** ✅ Fixed pagination */
+      const page = 1;
+      const limit = 10;
+
+      qb.skip((page - 1) * limit).take(limit);
+
+      const total = await qb.getCount();
+      const { entities, raw } = await qb.getRawAndEntities();
+      const data = entities.map((row: any, index: number) => {
+        return {
+          schedule_id: row.scheduleId,
+          demoBy: row.demoBy,
+          demoByname: raw[index]?.demoByName,
+          slot_date: row.slotDate,
+          slot_id: row.slot?.slotId,
+          slot_name: row.slot?.slotName,
+          demoBy_id: row.demoBy,
+          start_time: row.slot?.startTime,
+          end_time: row.slot?.endTime,
+          // SlotStatus: row.slot?.status,
+          schedule_status: row.status, // -> this is slot status (0,1,2)
+
+          // ✅ Correct logic
+          is_booked: raw[index]?.is_booked ? 1 : 0,
+        };
+      });
+
+      return {
+        message: DEMO_SLOT_SCHEDULE.SUCCESS.SCHEDULES_FETCHED,
+        data: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+          data,
+        },
+      };
+    } catch (error) {
+      this.logger.error('Fetch Slot Schedules Failed', error);
+
+      throw new InternalServerErrorException(
+        DEMO_SLOT_SCHEDULE.ERRORS.FETCH_FAILED,
+      );
+    }
+  }
+
+  async _updateBooking(dto: UpdateBookingDto, req?: any) {
+    try {
+      const { guestId, scheduleId, bookingStatus, meetingLink, metadata } = dto;
+
+      // 1️⃣ Validate required fields (ONLY guestId required)
+
+      if (!guestId) {
+        throw new BadRequestException('guestId is required');
+      }
+
+      // 2️⃣ Validate booking status
+
       if (
         bookingStatus !== undefined &&
-        !validStatuses.includes(bookingStatus)
+        !Object.values(BookingStatus).includes(bookingStatus)
       ) {
         throw new BadRequestException('Invalid booking status');
       }
-      console.log('bookingStatus', bookingStatus);
-      if (bookingStatus !== 3) {
-        // 3️⃣ Find schedule
-        const schedule = await this.scheduleRepo
-          .createQueryBuilder('s')
-          .leftJoin('s.slot', 'slot')
-          .where('s.demoBy = :demoBy', { demoBy })
-          .andWhere('s.slotDate = :slotDate', { slotDate })
-          .andWhere('slot.slotId = :slotId', { slotId })
-          .andWhere('s.status = :status', { status: 1 })
-          .getOne();
 
-        if (!schedule) {
-          throw new NotFoundException(
-            `Schedule not found for slotId: ${slotId}`,
+      let booking = await this.bookingRepo.findOne({
+        where: { guestId },
+        order: { createdAt: 'DESC' }, // safety if duplicates already exist
+      });
+
+      // 4️⃣ If not found → CREATE (only if scheduleId exists)
+      if (!booking) {
+        console.log('⚠️ Booking not found');
+
+        // if (!scheduleId) {
+        //   console.error('❌ scheduleId required for creating booking');
+        //   throw new BadRequestException(
+        //     'scheduleId is required to create booking',
+        //   );
+        // }
+        // ✅ Only require scheduleId if status is NOT rejection
+
+        if (!scheduleId && bookingStatus !== BookingStatus.REJECTED) {
+          throw new BadRequestException(
+            'scheduleId is required unless rejecting booking',
           );
         }
 
-        // 4️⃣ Find latest booking using guestId only
-        let booking = await this.bookingRepo.findOne({
-          where: { guestId },
-          order: { createdAt: 'DESC' }, // ✅ IMPORTANT
+        console.log('🆕 Creating new booking...');
+
+        const newBooking = this.bookingRepo.create({
+          guestId,
+          // scheduleId,
+          scheduleId: scheduleId ?? undefined,
+          bookingStatus,
+          meetingLink,
+          metadata,
+          createdBy: req?.user?.userId ?? 'SYSTEM',
         });
 
-        // 5️⃣ Create if not exists
-        // if (!booking) {
-        //   booking = await this.bookingRepo.save({
-        //     guestId,
-        //     scheduleId: schedule.scheduleId,
-        //     bookingStatus: bookingStatus ?? BookingStatus.BOOKED,
-        //     meetingLink: meetingLink ?? null,
-        //     metadata: metadata ?? null,
-        //     createdBy: req?.user?.userId ?? 'SYSTEM',
-        //     createdAt: new Date(),
-        //   });
-        // } else {
-        //   // 6️⃣ Update existing booking
-        //   await this.bookingRepo.update(
-        //     { bookingId: booking.bookingId },
-        //     {
-        //       scheduleId: schedule.scheduleId,
-        //       bookingStatus: bookingStatus ?? booking.bookingStatus,
-        //       meetingLink: meetingLink ?? booking.meetingLink,
-        //       metadata: metadata ?? booking.metadata,
-        //       updatedBy: req?.user?.userId ?? 'SYSTEM',
-        //       updatedAt: new Date(),
-        //     },
-        //   );
-        // }
-      } else {
-        //updateGuestUserDto.updatedBy = req?.user?.userId ?? 'SYSTEM';
+        await this.bookingRepo.save(newBooking);
 
-        this.guestUsersService.executeByActionType('update', guestId, {
-          status: bookingStatus,
-          updatedBy: req?.user?.userId, // optional
-        });
+        console.log('✅ Booking created successfully');
+
+        return {
+          message: 'Booking created successfully',
+          data: newBooking,
+        };
       }
 
-      // const response = {
-      //   message: 'Booking processed successfully',
-      //   data: {
-      //     guestId,
-      //     scheduleId: schedule.scheduleId,
-      //     bookingStatus: bookingStatus ?? booking.bookingStatus,
-      //   },
-      // };
+      Object.assign(booking, {
+        // ✅ IMPORTANT FIX: allow setting scheduleId if it was null before
+        ...(scheduleId && !booking.scheduleId && { scheduleId }),
 
-      // console.log(JSON.stringify(response, null, 2));
-      // return response;
+        bookingStatus: bookingStatus ?? booking.bookingStatus,
+        meetingLink: meetingLink ?? booking.meetingLink,
+        metadata: metadata ?? booking.metadata,
+        updatedBy: req?.user?.userId ?? 'SYSTEM',
+      });
+
+      await this.bookingRepo.save(booking);
+      console.log('✅ Booking updated successfully');
+
+      // 7️⃣ Check if schedule is booked (only if scheduleId exists)
+      let is_booked = 0;
+
+      if (scheduleId) {
+        const isBookedExists = await this.bookingRepo.exist({
+          where: { scheduleId },
+        });
+        is_booked = isBookedExists ? 1 : 0;
+      }
+      return {
+        message: 'Booking updated successfully',
+        data: {
+          bookingId: booking.bookingId,
+          guestId: booking.guestId,
+          scheduleId: booking.scheduleId,
+          bookingStatus: booking.bookingStatus,
+          is_booked,
+        },
+      };
     } catch (error) {
-      console.error('❌ ERROR:', error);
+      console.error('🔥 ERROR in _updateBooking:', error);
 
       if (error instanceof HttpException) throw error;
 

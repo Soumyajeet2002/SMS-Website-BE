@@ -13,10 +13,7 @@ import { Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 import { randomUUID } from 'crypto';
 
-import {
-  BookingStatusGuest,
-  GuestUserEntity,
-} from './entities/guest-users.entities';
+import { GuestUserEntity } from './entities/guest-users.entities';
 
 import { CreateGuestUserDto } from './dto/create-guest-user.dto';
 import { UpdateGuestUserDto } from './dto/update-guest-user.dto';
@@ -28,7 +25,6 @@ import { guestUserGetAllResMapperSql } from './mapper/guest-user.getAllresponse.
 import { GUEST_USERS } from 'src/common/messages/specific.msg';
 import { BookingStatus } from '../demo_bookings/entities/demo_booking.entities';
 import { DemoSlotBookingEntity } from '../demo_bookings/entities/demo_booking.entities';
-import { In } from 'typeorm';
 
 @Injectable()
 export class GuestUsersService {
@@ -81,17 +77,12 @@ export class GuestUsersService {
         createdBy: guestId,
       });
 
-      // const entity = this.sqlRepo.create({
-      //   ...dto,
-      //   createdBy: '550e8400-e29b-41d4-a716-446655440000',
-      // });
-
       const saved = await this.sqlRepo.save(entity);
       console.log('Saved Guest User:', saved);
 
       await this.bookingRepo.save({
         guestId: saved.guestId,
-        bookingStatus: BookingStatusGuest.PENDING, // default 0
+        bookingStatus: BookingStatus.PENDING, // default 0
         createdBy: saved.guestId,
       });
 
@@ -158,32 +149,13 @@ export class GuestUsersService {
 
       const [data, total] = await qb.getManyAndCount();
 
-      /** Left join with booking table to compute bookingStatus dynamically */
       const guests = await qb.getMany();
 
-      // Fetch booking status for each guest
-
-      // console.log('Guests:', guests);
       const guestIds = guests.map((g) => g.guestId);
       const bookings = await this.bookingRepo.find({
-        where: {
-          guestId: In(guestIds),
-          bookingStatus: BookingStatusGuest.BOOKED,
-        },
-
         select: ['guestId', 'bookingStatus'],
       });
       console.log('Bookings:', bookings);
-      // const bookedGuestIds = new Set(bookings.map((b) => b.guestId));
-
-      // Map response with dynamic bookingStatus
-      // const result = guests.map((guest) => {
-      //   const guestRes = guestUserResMapperSql(guest);
-      //   return {
-      //     ...guestRes,
-      //     bookingStatus: bookedGuestIds.has(guest.guestId) ? 1 : 0,
-      //   };
-      // });
 
       const bookingMap = new Map(
         bookings.map((b) => [b.guestId, b.bookingStatus]),
@@ -239,7 +211,7 @@ export class GuestUsersService {
   }
 
   /** Update Guest User */
-  async _updateSql(id: string, dto: Partial<UpdateGuestUserDto>) {
+  async _updateSql(id: string, dto: UpdateGuestUserDto) {
     try {
       delete (dto as any).createdBy;
       delete (dto as any).createdAt;
@@ -271,27 +243,6 @@ export class GuestUsersService {
       throw new InternalServerErrorException(GUEST_USERS.ERRORS.UPDATE_FAILED);
     }
   }
-
-  /** Soft Delete Guest User */
-  // async _removeSql(id: string) {
-  //   try {
-  //     await this._findOneSql(id);
-
-  //     await this.sqlRepo.update({ guestId: id }, { status: 2 });
-
-  //     return {
-  //       message: GUEST_USERS.SUCCESS.GUEST_USER_DELETED,
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof HttpException) {
-  //       throw error;
-  //     }
-
-  //     this.logger.error('Delete Guest User Failed', error);
-
-  //     throw new InternalServerErrorException(GUEST_USERS.ERRORS.DELETE_FAILED);
-  //   }
-  // }
 
   // hard delete
   async _removeSql(id: string) {
