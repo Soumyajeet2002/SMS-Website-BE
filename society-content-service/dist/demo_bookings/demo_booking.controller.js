@@ -29,6 +29,10 @@ let DemoSlotBookingController = class DemoSlotBookingController {
     update(dto, req) {
         return this.bookingService.executeByActionType('update', dto, req);
     }
+    removeBooking(booking_id) {
+        console.log('ID from param:', booking_id);
+        return this.bookingService.executeByActionType('remove', booking_id);
+    }
 };
 exports.DemoSlotBookingController = DemoSlotBookingController;
 __decorate([
@@ -50,6 +54,15 @@ __decorate([
     __metadata("design:paramtypes", [update_booking_dto_1.UpdateBookingDto, Object]),
     __metadata("design:returntype", void 0)
 ], DemoSlotBookingController.prototype, "update", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Delete Booking Record' }),
+    (0, swagger_1.ApiBearerAuth)('access-token'),
+    (0, common_1.Delete)(':booking_id'),
+    __param(0, (0, common_1.Param)('booking_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], DemoSlotBookingController.prototype, "removeBooking", null);
 exports.DemoSlotBookingController = DemoSlotBookingController = __decorate([
     (0, common_1.Controller)('demo-slot-booking'),
     __metadata("design:paramtypes", [demo_booking_service_1.DemoSlotBookingService])

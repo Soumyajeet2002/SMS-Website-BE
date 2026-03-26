@@ -6,4 +6,5 @@ export declare class DemoSlotBookingController {
     constructor(bookingService: DemoSlotBookingService);
     getAll(body: GetDemoRequestDetailsDto, req: any): Promise<unknown>;
     update(dto: UpdateBookingDto, req: any): Promise<unknown>;
+    removeBooking(booking_id: string): Promise<unknown>;
 }

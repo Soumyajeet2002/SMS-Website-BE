@@ -20,6 +20,7 @@ import { SlotScheduleStatus } from '../demo_slot_schedule/entities/slot-schedule
 import { UpdateBookingDto } from './dto/update-booking.dto';
 
 import { DEMO_SLOT_SCHEDULE } from '../common/messages/specific.msg';
+import { remove } from 'fs-extra';
 
 @Injectable()
 export class DemoSlotBookingService {
@@ -43,6 +44,7 @@ export class DemoSlotBookingService {
     const methodMap: Record<string, (...args: any[]) => Promise<unknown>> = {
       create: this._GetSlotDetails.bind(this),
       update: this._updateBooking.bind(this),
+      remove: this._removeBooking.bind(this),
     };
     const method = methodMap[fn];
 
@@ -248,6 +250,25 @@ export class DemoSlotBookingService {
       throw new InternalServerErrorException(
         error.message || 'Failed to update booking',
       );
+    }
+  }
+
+  async _removeBooking(id: string) {
+    try {
+      const result = await this.bookingRepo.update(
+        { bookingId: id },
+        { bookingStatus: BookingStatus.DELETED },
+      );
+      console.log(result);
+
+      // await this.bookingRepo.delete({ bookingId: id });
+
+      return {
+        message: 'Successfully deleted booking',
+        bookingId: id,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to delete booking');
     }
   }
 }

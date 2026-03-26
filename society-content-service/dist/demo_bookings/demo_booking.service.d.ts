@@ -46,4 +46,8 @@ export declare class DemoSlotBookingService {
             is_booked: number;
         };
     }>;
+    _removeBooking(id: string): Promise<{
+        message: string;
+        bookingId: string;
+    }>;
 }

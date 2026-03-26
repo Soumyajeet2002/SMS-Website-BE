@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Req, Patch, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  Patch,
+  Get,
+  Query,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { DemoSlotBookingService } from './demo_booking.service';
 import { UpdateBookingDto } from './dto/update-booking.dto';
@@ -20,5 +30,13 @@ export class DemoSlotBookingController {
   @Patch('confirm-booking')
   update(@Body() dto: UpdateBookingDto, @Req() req: any) {
     return this.bookingService.executeByActionType('update', dto, req);
+  }
+
+  @ApiOperation({ summary: 'Delete Booking Record' })
+  @ApiBearerAuth('access-token')
+  @Delete(':booking_id')
+  removeBooking(@Param('booking_id') booking_id: string) {
+    console.log('ID from param:', booking_id);
+    return this.bookingService.executeByActionType('remove', booking_id);
   }
 }

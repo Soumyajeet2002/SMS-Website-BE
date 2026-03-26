@@ -38,6 +38,7 @@ let DemoSlotBookingService = DemoSlotBookingService_1 = class DemoSlotBookingSer
         const methodMap = {
             create: this._GetSlotDetails.bind(this),
             update: this._updateBooking.bind(this),
+            remove: this._removeBooking.bind(this),
         };
         const method = methodMap[fn];
         if (!method) {
@@ -178,6 +179,19 @@ let DemoSlotBookingService = DemoSlotBookingService_1 = class DemoSlotBookingSer
             if (error instanceof common_1.HttpException)
                 throw error;
             throw new common_1.InternalServerErrorException(error.message || 'Failed to update booking');
+        }
+    }
+    async _removeBooking(id) {
+        try {
+            const result = await this.bookingRepo.update({ bookingId: id }, { bookingStatus: demo_booking_entities_1.BookingStatus.DELETED });
+            console.log(result);
+            return {
+                message: 'Successfully deleted booking',
+                bookingId: id,
+            };
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException('Failed to delete booking');
         }
     }
 };

@@ -18,6 +18,7 @@ var BookingStatus;
     BookingStatus[BookingStatus["COMPLETED"] = 2] = "COMPLETED";
     BookingStatus[BookingStatus["REJECTED"] = 3] = "REJECTED";
     BookingStatus[BookingStatus["NO_SHOW"] = 4] = "NO_SHOW";
+    BookingStatus[BookingStatus["DELETED"] = 5] = "DELETED";
 })(BookingStatus || (exports.BookingStatus = BookingStatus = {}));
 let DemoSlotBookingEntity = class DemoSlotBookingEntity {
     bookingId;
@@ -53,7 +54,7 @@ __decorate([
         name: 'booking_status',
         type: 'smallint',
         default: BookingStatus.PENDING,
-        comment: '0=Pending,1=Booked,2=Completed,3=Cancelled,4=No Show',
+        comment: '0=Pending,1=Booked,2=Completed,3=Cancelled,4=No Show, 5=Deleted',
     }),
     __metadata("design:type", Number)
 ], DemoSlotBookingEntity.prototype, "bookingStatus", void 0);

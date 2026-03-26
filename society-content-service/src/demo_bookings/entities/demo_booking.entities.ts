@@ -22,6 +22,7 @@ export enum BookingStatus {
   COMPLETED = 2,
   REJECTED = 3,
   NO_SHOW = 4,
+  DELETED = 5,
 }
 
 @Entity({ name: 'demo_bookings', schema: 'society_cms' })
@@ -49,7 +50,7 @@ export class DemoSlotBookingEntity {
     name: 'booking_status',
     type: 'smallint',
     default: BookingStatus.PENDING,
-    comment: '0=Pending,1=Booked,2=Completed,3=Cancelled,4=No Show',
+    comment: '0=Pending,1=Booked,2=Completed,3=Cancelled,4=No Show, 5=Deleted',
   })
   bookingStatus: BookingStatus;
 

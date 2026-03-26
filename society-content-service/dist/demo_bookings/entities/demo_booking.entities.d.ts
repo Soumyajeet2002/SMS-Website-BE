@@ -3,7 +3,8 @@ export declare enum BookingStatus {
     BOOKED = 1,
     COMPLETED = 2,
     REJECTED = 3,
-    NO_SHOW = 4
+    NO_SHOW = 4,
+    DELETED = 5
 }
 export declare class DemoSlotBookingEntity {
     bookingId: string;
