@@ -1,0 +1,37 @@
+export declare class BaseFlatListingDto {
+    societyId: string;
+    title: string;
+    description?: string;
+    availableFrom?: string;
+    rentAmount?: number;
+    securityDeposit?: number;
+    maintenanceAmount?: number;
+    rentNegotiable?: boolean;
+    flatType?: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    balconies?: number;
+    furnishingType?: string;
+    carpetArea?: number;
+    areaUnit?: string;
+    countryCode: number;
+    stateCode: number;
+    districtCode: number;
+    locality?: string;
+    pincode?: string;
+    latitude?: number;
+    longitude?: number;
+    contactName?: string;
+    primaryMobile?: string;
+    alternateMobile?: string;
+    email?: string;
+    whatsappAvailable?: boolean;
+    preferredContactTime?: string;
+    isPublic?: boolean;
+    isFeatured?: boolean;
+    showExactAddress?: boolean;
+    isContactPublic?: boolean;
+    status?: number;
+    expiresAt?: string;
+    details?: Record<string, any>;
+}

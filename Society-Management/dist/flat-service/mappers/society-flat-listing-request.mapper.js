@@ -1,0 +1,45 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.societyFlatListingRequestMapper = societyFlatListingRequestMapper;
+function societyFlatListingRequestMapper(data) {
+    return {
+        society_id: data.societyId,
+        member_id: data.memberId,
+        title: data.title,
+        description: data.description,
+        available_from: data.availableFrom,
+        rent_amount: data.rentAmount,
+        security_deposit: data.securityDeposit,
+        maintenance_amount: data.maintenanceAmount,
+        rent_negotiable: data.rentNegotiable,
+        flat_type: data.flatType,
+        bedrooms: data.bedrooms,
+        bathrooms: data.bathrooms,
+        balconies: data.balconies,
+        furnishing_type: data.furnishingType,
+        carpet_area: data.carpetArea,
+        area_unit: data.areaUnit,
+        country_code: data.countryCode,
+        state_code: data.stateCode,
+        district_code: data.districtCode,
+        locality: data.locality,
+        pincode: data.pincode,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        contact_name: data.contactName,
+        primary_mobile: data.primaryMobile,
+        alternate_mobile: data.alternateMobile,
+        email: data.email,
+        whatsapp_available: data.whatsappAvailable,
+        preferred_contact_time: data.preferredContactTime,
+        is_public: data.isPublic,
+        is_featured: data.isFeatured,
+        show_exact_address: data.showExactAddress,
+        is_contact_public: data.isContactPublic,
+        status: data.status,
+        expires_at: data.expiresAt,
+        published_at: data.publishedAt,
+        details: data.details,
+    };
+}
+//# sourceMappingURL=society-flat-listing-request.mapper.js.map
