@@ -10,6 +10,7 @@ export enum VendorStatus {
   INACTIVE = 0,
   ACTIVE = 1,
   BLACKLISTED = 2,
+  DELETED = 3,
 }
 
 @Entity({

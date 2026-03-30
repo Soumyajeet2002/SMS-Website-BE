@@ -231,7 +231,7 @@ export class UserSocietyMapService {
             }
             const result = await this.sqlRepo!.update(id, { ...mappedEntity, updated_by: req.user.userId })
             const updatedData = await this._findOne(id)
-            return { ...updatedData, message: USERSOCIETYMAP.SUCCESS.USERMAP_UPDATED }
+            return { ...updatedData,success:true, message: USERSOCIETYMAP.SUCCESS.USERMAP_UPDATED }
         } catch (error) {
 
             if (error instanceof HttpException) {

@@ -21,8 +21,11 @@ import { JwtAuthGuard } from './common/security/guards/jwt-auth.guard';
 import { SocietyAdminModule } from './society-admin/society-admin.module';
 import { SocietyAmenityMappingsModule } from './society-amenity-mappings/society-amenity-mappings.module';
 import { ResidentDetailsModule } from './resident-details/resident-details.module';
+import { SecurityGuardsModule } from './security-guards/security-guards.module';
 
 import { VendorDetailsModule } from './vendor-details/vendor-details.module';
+import { VehicleModule } from './vehicle_registration/vehicle-registration.module';
+
 
 @Module({
   imports: [
@@ -47,9 +50,9 @@ import { VendorDetailsModule } from './vendor-details/vendor-details.module';
     SocietyAdminModule,
     SocietyAmenityMappingsModule,
     ResidentDetailsModule,
-
-    //
+    SecurityGuardsModule,
     VendorDetailsModule,
+    VehicleModule,
   ],
   providers: [
     JwtStrategy,

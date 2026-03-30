@@ -1,14 +1,17 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
-    name: 'resident_details',
-    schema: 'society_management',
+  name: 'resident_details',
+  schema: 'society_management',
 })
 export class ResidentDetails {
-  
+
   @PrimaryGeneratedColumn('uuid')
   resident_uuid: string;
 
+  @Column({ type: 'varchar' })
+  member_id: string;
+  
   @Column({ type: 'bigint' })
   block_id: number;
 
