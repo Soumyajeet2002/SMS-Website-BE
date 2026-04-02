@@ -18,11 +18,12 @@ import {
 
 export class GetVehicleQueryDto {
   @ApiPropertyOptional({
-    description: 'Filter vehicles by residentId',
-    example: 'c1b2c3d4-1234-5678-9101-abcdef123456',
+    description: 'Filter vehicles by resident name // residentId',
+    example: 'Paditya Srasad Aahoo // c1b2c3d4-1234-5678-9101-abcdef123456',
   })
   @IsOptional()
-  @IsUUID()
+  // @IsUUID()
+  @IsString()
   residentId?: string;
 
   @ApiPropertyOptional({

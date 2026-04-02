@@ -1,0 +1,80 @@
+import { SecurityGuardsEntity } from './entities/security-guards.entities';
+import { SocietySetupDetailsEntity } from '../society-details/entities/society-details.entity';
+import { CreateSecurityGuardsDto } from './dto/create-security-guards.dto';
+import { Repository } from 'typeorm';
+export declare class SecurityGuardsService {
+    private readonly sqlRepo;
+    private readonly societyRepo;
+    private readonly logger;
+    constructor(sqlRepo: Repository<SecurityGuardsEntity>, societyRepo: Repository<SocietySetupDetailsEntity>);
+    executeByActionType(fn: string, ...args: any[]): any;
+    _createSql(data: CreateSecurityGuardsDto, req: any): Promise<{
+        message: string;
+    }>;
+    _findAllSql(query: any): Promise<{
+        page: null;
+        limit: null;
+        total: number;
+        totalPages: number;
+        data: {
+            id: any;
+            guardId: any;
+            vendorId: any;
+            dateOfBirth: any;
+            gender: any;
+            emergencyContact: any;
+            permanentAddress: any;
+            currentAddress: any;
+            profilePhotoUrl: any;
+            idType: any;
+            idNumber: any;
+            idProofUrl: any;
+            policeVerificationStatus: any;
+            backgroundCheckStatus: any;
+            employeeCode: any;
+            joiningDate: any;
+            employmentType: any;
+            designation: any;
+            status: any;
+            metadata: any;
+            createdAt: any;
+            createdBy: any;
+            updatedAt: any;
+            updatedBy: any;
+        }[];
+        message: string;
+    } | {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        data: {
+            id: any;
+            guardId: any;
+            vendorId: any;
+            dateOfBirth: any;
+            gender: any;
+            emergencyContact: any;
+            permanentAddress: any;
+            currentAddress: any;
+            profilePhotoUrl: any;
+            idType: any;
+            idNumber: any;
+            idProofUrl: any;
+            policeVerificationStatus: any;
+            backgroundCheckStatus: any;
+            employeeCode: any;
+            joiningDate: any;
+            employmentType: any;
+            designation: any;
+            status: any;
+            metadata: any;
+            createdAt: any;
+            createdBy: any;
+            updatedAt: any;
+            updatedBy: any;
+        }[];
+        message: string;
+    }>;
+    private generateEmployeeCode;
+}

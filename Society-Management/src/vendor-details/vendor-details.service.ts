@@ -63,8 +63,11 @@ export class VendorDetailsService {
         }
       }
 
+      const societyId = req.user.societyId;
+
       const entity = this.vendorRepo.create({
         ...data,
+        societyId,
         vendorStatus: data.vendorStatus ?? VendorStatus.ACTIVE,
         created_by: req.user.userId,
         updated_by: req.user.userId,
@@ -144,6 +147,7 @@ export class VendorDetailsService {
     vendorId: string,
     data: UpdateVendorDto,
     updatedBy: string,
+    req: any,
   ) {
     try {
       // ✅ Fetch the existing vendor

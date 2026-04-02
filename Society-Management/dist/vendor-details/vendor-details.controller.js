@@ -18,6 +18,7 @@ const swagger_1 = require("@nestjs/swagger");
 const vendor_details_service_1 = require("./vendor-details.service");
 const create_vendor_details_dto_1 = require("./dto/create-vendor-details.dto");
 const fetch_vendor_details_dto_1 = require("./dto/fetch-vendor-details.dto");
+const update_vendor_details_dto_1 = require("./dto/update-vendor-details.dto");
 let VendorDetailsController = class VendorDetailsController {
     vendorDetailsService;
     constructor(vendorDetailsService) {
@@ -28,6 +29,12 @@ let VendorDetailsController = class VendorDetailsController {
     }
     async getAllVendors(query) {
         return this.vendorDetailsService.executeByActionType('fetch', query);
+    }
+    async updateVendor(vendorId, data) {
+        return this.vendorDetailsService.executeByActionType('update', vendorId, data);
+    }
+    async deleteVendor(vendorId) {
+        return this.vendorDetailsService.executeByActionType('delete', vendorId);
     }
 };
 exports.VendorDetailsController = VendorDetailsController;
@@ -48,6 +55,25 @@ __decorate([
     __metadata("design:paramtypes", [fetch_vendor_details_dto_1.GetVendorQueryDto]),
     __metadata("design:returntype", Promise)
 ], VendorDetailsController.prototype, "getAllVendors", null);
+__decorate([
+    (0, common_1.Patch)(':vendorId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update a vendor by ID' }),
+    __param(0, (0, common_1.Param)('vendorId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_vendor_details_dto_1.UpdateVendorDto]),
+    __metadata("design:returntype", Promise)
+], VendorDetailsController.prototype, "updateVendor", null);
+__decorate([
+    (0, common_1.Delete)(':vendorId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete vendor by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Vendor deleted successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 409, description: 'Vendor not found' }),
+    __param(0, (0, common_1.Param)('vendorId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], VendorDetailsController.prototype, "deleteVendor", null);
 exports.VendorDetailsController = VendorDetailsController = __decorate([
     (0, swagger_1.ApiTags)('Vendors'),
     (0, swagger_1.ApiBearerAuth)('access-token'),

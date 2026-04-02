@@ -39,6 +39,7 @@ export declare const USERRESIDENTMAP: {
         FETCH_FAILED: string;
         UPDATE_FAILED: string;
         DELETE_FAILED: string;
+        RESIDENT_NOT_FOUND: string;
     };
     SUCCESS: {
         RESIDENT_CREATED: string;
@@ -159,5 +160,20 @@ export declare const SOCIETYAMENITYMAP: {
         SOCAMNT_UPDATED: string;
         SOCAMNT_PARTIAL: string;
         SOCAMNT_DELETED: string;
+    };
+};
+export declare const SECURITYGUARDS: {
+    ERRORS: {
+        INVALID_ID: string;
+        CREATE_FAILED: string;
+        FETCH_FAILED: string;
+        UPDATE_FAILED: string;
+        DELETE_FAILED: string;
+    };
+    SUCCESS: {
+        SECURITY_GUARDS_CREATED: string;
+        SECURITY_GUARDS_FETCHED: string;
+        SECURITY_GUARDS_UPDATED: string;
+        SECURITY_GUARDS_DELETED: string;
     };
 };

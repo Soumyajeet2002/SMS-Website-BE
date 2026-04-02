@@ -25,7 +25,7 @@ import { SecurityGuardsModule } from './security-guards/security-guards.module';
 
 import { VendorDetailsModule } from './vendor-details/vendor-details.module';
 import { VehicleModule } from './vehicle_registration/vehicle-registration.module';
-
+import { ParkingSlotModule } from './parking-slot-management/parking-slot-management.module';
 
 @Module({
   imports: [
@@ -53,6 +53,7 @@ import { VehicleModule } from './vehicle_registration/vehicle-registration.modul
     SecurityGuardsModule,
     VendorDetailsModule,
     VehicleModule,
+    ParkingSlotModule,
   ],
   providers: [
     JwtStrategy,

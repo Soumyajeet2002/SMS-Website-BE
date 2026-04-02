@@ -16,9 +16,11 @@ var VendorStatus;
     VendorStatus[VendorStatus["INACTIVE"] = 0] = "INACTIVE";
     VendorStatus[VendorStatus["ACTIVE"] = 1] = "ACTIVE";
     VendorStatus[VendorStatus["BLACKLISTED"] = 2] = "BLACKLISTED";
+    VendorStatus[VendorStatus["DELETED"] = 3] = "DELETED";
 })(VendorStatus || (exports.VendorStatus = VendorStatus = {}));
 let VendorDetailsEntity = class VendorDetailsEntity {
     vendorId;
+    societyId;
     vendorName;
     vendorType;
     email;
@@ -36,6 +38,10 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)('uuid', { name: 'vendor_id' }),
     __metadata("design:type", String)
 ], VendorDetailsEntity.prototype, "vendorId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'society_id', type: 'uuid' }),
+    __metadata("design:type", String)
+], VendorDetailsEntity.prototype, "societyId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'vendor_name', type: 'varchar', length: 150 }),
     __metadata("design:type", String)

@@ -46,7 +46,7 @@ export class VehicleController {
   }
 
   @ApiOperation({ summary: 'Patch vehicle details by residentId' })
-  @Patch('UPDATE' + ':residentId')
+  @Patch(':residentId')
   async updateVehiclesByResident(
     @Param('residentId') residentId: string,
     @Body() body: UpdateVehicleBulkDto,
@@ -54,9 +54,9 @@ export class VehicleController {
     return this.vehicleService._updateVehiclesByResident(residentId, body);
   }
 
-  @Delete('DELETE' + ':vehicleId')
-  @ApiOperation({ summary: 'Soft delete vehicle' })
-  deleteVehicle(@Param('vehicleId') vehicleId: string) {
-    return this.vehicleService.deleteVehicle(vehicleId);
-  }
+  //   @Delete(':vehicleId')
+  //   @ApiOperation({ summary: 'Soft delete vehicle' })
+  //   deleteVehicle(@Param('vehicleId') vehicleId: string) {
+  //     return this.vehicleService.deleteVehicle(vehicleId);
+  //   }
 }

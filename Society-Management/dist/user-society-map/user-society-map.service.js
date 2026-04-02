@@ -210,7 +210,7 @@ let UserSocietyMapService = UserSocietyMapService_1 = class UserSocietyMapServic
             }
             const result = await this.sqlRepo.update(id, { ...mappedEntity, updated_by: req.user.userId });
             const updatedData = await this._findOne(id);
-            return { ...updatedData, message: specific_msg_1.USERSOCIETYMAP.SUCCESS.USERMAP_UPDATED };
+            return { ...updatedData, success: true, message: specific_msg_1.USERSOCIETYMAP.SUCCESS.USERMAP_UPDATED };
         }
         catch (error) {
             if (error instanceof common_1.HttpException) {

@@ -1,5 +1,6 @@
 export declare class ResidentDetails {
     resident_uuid: string;
+    member_id: string;
     block_id: number;
     flat_number: string;
     owner_type: string;

@@ -20,6 +20,7 @@ const typeorm_2 = require("typeorm");
 const common_2 = require("@nestjs/common");
 const common_3 = require("@nestjs/common");
 const vendor_details_entities_1 = require("./entities/vendor-details.entities");
+const vendor_details_response_mapper_1 = require("./mapper/vendor-details-response.mapper");
 let VendorDetailsService = VendorDetailsService_1 = class VendorDetailsService {
     vendorRepo;
     logger = new common_3.Logger(VendorDetailsService_1.name);
@@ -30,6 +31,8 @@ let VendorDetailsService = VendorDetailsService_1 = class VendorDetailsService {
         const methodMap = {
             create: this._createSql.bind(this),
             fetch: this._getAllVendors.bind(this),
+            update: this._updateVendor.bind(this),
+            delete: this._deleteVendor.bind(this),
         };
         if (!methodMap[fn]) {
             throw new Error(`Invalid action type: ${fn}`);
@@ -54,17 +57,16 @@ let VendorDetailsService = VendorDetailsService_1 = class VendorDetailsService {
                     throw new common_2.ConflictException('Vendor with this email or phone number already exists');
                 }
             }
+            const societyId = req.user.societyId;
             const entity = this.vendorRepo.create({
                 ...data,
+                societyId,
                 vendorStatus: data.vendorStatus ?? vendor_details_entities_1.VendorStatus.ACTIVE,
                 created_by: req.user.userId,
                 updated_by: req.user.userId,
             });
             const saved = await this.vendorRepo.save(entity);
-            return {
-                message: 'Vendor created successfully',
-                data: saved,
-            };
+            return vendor_details_response_mapper_1.mapper.response.createVendor(saved);
         }
         catch (error) {
             this.logger.error(`Error creating vendor. Payload: ${JSON.stringify(data)}`, error.stack, 'VendorDetailsService');
@@ -106,6 +108,68 @@ let VendorDetailsService = VendorDetailsService_1 = class VendorDetailsService {
         catch (error) {
             this.logger.error('Fetch Vendors Failed', error.stack || error);
             throw new common_1.InternalServerErrorException('Failed to fetch vendors');
+        }
+    }
+    async _updateVendor(vendorId, data, updatedBy, req) {
+        try {
+            const vendor = await this.vendorRepo.findOne({ where: { vendorId } });
+            if (!vendor) {
+                throw new common_2.ConflictException('Vendor not found');
+            }
+            const conditions = [];
+            if (data.phoneNo)
+                conditions.push({ phoneNo: data.phoneNo });
+            if (data.email)
+                conditions.push({ email: data.email });
+            if (conditions.length) {
+                const existing = await this.vendorRepo.findOne({
+                    where: conditions.map((cond) => ({
+                        ...cond,
+                        vendorId: (0, typeorm_2.Not)(vendorId),
+                    })),
+                });
+                if (existing) {
+                    if (existing.phoneNo === data.phoneNo) {
+                        throw new common_2.ConflictException('Phone number already exists');
+                    }
+                    if (existing.email === data.email) {
+                        throw new common_2.ConflictException('Email already exists');
+                    }
+                }
+            }
+            Object.assign(vendor, data);
+            vendor.updated_by = updatedBy;
+            const updated = await this.vendorRepo.save(vendor);
+            return {
+                message: 'Vendor updated successfully',
+                data: updated,
+            };
+        }
+        catch (error) {
+            this.logger.error('Update Vendor Failed', error.stack || error);
+            if (error instanceof common_2.ConflictException)
+                throw error;
+            throw new common_1.InternalServerErrorException('Failed to update vendor');
+        }
+    }
+    async _deleteVendor(vendorId, updatedBy) {
+        try {
+            const vendor = await this.vendorRepo.findOne({ where: { vendorId } });
+            if (!vendor) {
+                throw new common_2.ConflictException('Vendor not found');
+            }
+            vendor.vendorStatus = vendor_details_entities_1.VendorStatus.DELETED;
+            vendor.updated_by = updatedBy;
+            await this.vendorRepo.save(vendor);
+            return {
+                message: 'Vendor deleted successfully',
+            };
+        }
+        catch (error) {
+            this.logger.error('Delete Vendor Failed', error.stack || error);
+            if (error instanceof common_2.ConflictException)
+                throw error;
+            throw new common_1.InternalServerErrorException('Failed to delete vendor');
         }
     }
 };

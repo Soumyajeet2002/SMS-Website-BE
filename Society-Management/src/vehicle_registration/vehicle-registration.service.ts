@@ -284,12 +284,25 @@ export class VehicleService {
       let index = 1;
 
       // 🔹 Filters
-      if (residentId) {
-        conditions.push(`v.resident_id = $${index}`);
-        values.push(residentId);
-        index++;
-      }
+      // if (residentId) {
+      //   conditions.push(`v.resident_id = $${index}`);
+      //   values.push(residentId);
+      //   index++;
+      // }
 
+      if (residentId) {
+        if (isUUID(residentId)) {
+          // ✅ Search by ID
+          conditions.push(`v.resident_id = $${index}`);
+          values.push(residentId);
+          index++;
+        } else {
+          // ✅ Search by Name
+          conditions.push(`u.name ILIKE $${index}`);
+          values.push(`%${residentId}%`);
+          index++;
+        }
+      }
       if (vehicleType) {
         conditions.push(`v.vehicle_type ILIKE $${index}`);
         values.push(`%${vehicleType}%`);
@@ -414,11 +427,11 @@ export class VehicleService {
 
       return {
         message: 'Vehicles fetched successfully',
-        data: Object.values(grouped),
         total,
         page,
         limit,
         totalPages: Math.ceil(total / limit),
+        data: Object.values(grouped),
       };
     } catch (error) {
       this.logger.error('Error fetching vehicles', error.stack);
@@ -569,25 +582,124 @@ export class VehicleService {
 
       const updatedVehicles = [];
 
+      // for (const vehicle of vehicles) {
+      //   const { vehicleId } = vehicle;
+
+      //   // ✅ Validate vehicleId
+      //   if (!vehicleId) {
+      //     throw new BadRequestException('vehicleId is required');
+      //   }
+
+      //   const existing = await this.vehicleRepo.findOne({
+      //     where: { vehicleId, residentId },
+      //   });
+
+      //   if (!existing) {
+      //     throw new NotFoundException(
+      //       `Vehicle ${vehicleId} not found for this resident`,
+      //     );
+      //   }
+
+      //   // ✅ Handle number plate update
+      //   if (vehicle.numberPlate) {
+      //     const normalizedPlate = vehicle.numberPlate.toUpperCase();
+
+      //     const duplicate = await this.vehicleRepo.findOne({
+      //       where: { numberPlate: normalizedPlate },
+      //     });
+
+      //     if (duplicate && duplicate.vehicleId !== vehicleId) {
+      //       throw new ConflictException(
+      //         `Vehicle with number plate ${normalizedPlate} already exists`,
+      //       );
+      //     }
+
+      //     existing.numberPlate = normalizedPlate;
+      //   }
+
+      //   // ✅ Clean partial update (dynamic)
+      //   Object.assign(existing, {
+      //     ...(vehicle.vehicleType !== undefined && {
+      //       vehicleType: vehicle.vehicleType,
+      //     }),
+      //     ...(vehicle.vehicleModel !== undefined && {
+      //       vehicleModel: vehicle.vehicleModel,
+      //     }),
+      //     ...(vehicle.vehiclePhoto !== undefined && {
+      //       vehiclePhoto: vehicle.vehiclePhoto,
+      //     }),
+      //     ...(vehicle.fuelType !== undefined && {
+      //       fuelType: vehicle.fuelType,
+      //     }),
+      //     ...(vehicle.status !== undefined && {
+      //       status: vehicle.status,
+      //     }),
+      //     ...(vehicle.metaData !== undefined && {
+      //       metaData: vehicle.metaData,
+      //     }),
+      //   });
+
+      //   // ✅ Audit
+      //   if (userId) {
+      //     (existing as any).updatedBy = userId;
+      //   }
+
+      //   updatedVehicles.push(existing);
+      // }
+
       for (const vehicle of vehicles) {
-        const { vehicleId } = vehicle;
+        let existing = null;
 
-        // ✅ Validate vehicleId
-        if (!vehicleId) {
-          throw new BadRequestException('vehicleId is required');
+        // 🔍 Try to find only if vehicleId is provided
+        if (vehicle.vehicleId) {
+          existing = await this.vehicleRepo.findOne({
+            where: { vehicleId: vehicle.vehicleId, residentId },
+          });
         }
 
-        const existing = await this.vehicleRepo.findOne({
-          where: { vehicleId, residentId },
-        });
-
+        // =========================
+        // 🆕 CREATE FLOW
+        // =========================
         if (!existing) {
-          throw new NotFoundException(
-            `Vehicle ${vehicleId} not found for this resident`,
-          );
+          if (!vehicle.numberPlate) {
+            throw new BadRequestException(
+              'numberPlate is required for new vehicle',
+            );
+          }
+
+          const normalizedPlate = vehicle.numberPlate.toUpperCase();
+
+          // 🚫 Duplicate check
+          const duplicate = await this.vehicleRepo.findOne({
+            where: { numberPlate: normalizedPlate },
+          });
+
+          if (duplicate) {
+            throw new ConflictException(
+              `Vehicle with number plate ${normalizedPlate} already exists`,
+            );
+          }
+
+          const newVehicle = this.vehicleRepo.create({
+            residentId,
+            numberPlate: normalizedPlate,
+            vehicleType: vehicle.vehicleType,
+            vehicleModel: vehicle.vehicleModel,
+            vehiclePhoto: vehicle.vehiclePhoto,
+            fuelType: vehicle.fuelType,
+            status: vehicle.status,
+            metaData: vehicle.metaData,
+            ...(userId && { createdBy: userId }),
+          });
+
+          // 🚨 DO NOT set vehicleId manually → DB will generate it
+          updatedVehicles.push(newVehicle);
+          continue;
         }
 
-        // ✅ Handle number plate update
+        // =========================
+        // 🔄 UPDATE FLOW
+        // =========================
         if (vehicle.numberPlate) {
           const normalizedPlate = vehicle.numberPlate.toUpperCase();
 
@@ -595,7 +707,7 @@ export class VehicleService {
             where: { numberPlate: normalizedPlate },
           });
 
-          if (duplicate && duplicate.vehicleId !== vehicleId) {
+          if (duplicate && duplicate.vehicleId !== existing.vehicleId) {
             throw new ConflictException(
               `Vehicle with number plate ${normalizedPlate} already exists`,
             );
@@ -604,7 +716,6 @@ export class VehicleService {
           existing.numberPlate = normalizedPlate;
         }
 
-        // ✅ Clean partial update (dynamic)
         Object.assign(existing, {
           ...(vehicle.vehicleType !== undefined && {
             vehicleType: vehicle.vehicleType,
@@ -626,7 +737,6 @@ export class VehicleService {
           }),
         });
 
-        // ✅ Audit
         if (userId) {
           (existing as any).updatedBy = userId;
         }

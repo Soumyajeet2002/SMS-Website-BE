@@ -21,6 +21,9 @@ export class VendorDetailsEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'vendor_id' })
   vendorId: string;
 
+  @Column({ name: 'society_id', type: 'uuid' })
+  societyId: string;
+
   @Column({ name: 'vendor_name', type: 'varchar', length: 150 })
   vendorName: string;
 

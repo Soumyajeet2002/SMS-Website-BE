@@ -1,0 +1,26 @@
+export declare function securityGuardsResponseMapper(entity: any): {
+    id: any;
+    guardId: any;
+    vendorId: any;
+    dateOfBirth: any;
+    gender: any;
+    emergencyContact: any;
+    permanentAddress: any;
+    currentAddress: any;
+    profilePhotoUrl: any;
+    idType: any;
+    idNumber: any;
+    idProofUrl: any;
+    policeVerificationStatus: any;
+    backgroundCheckStatus: any;
+    employeeCode: any;
+    joiningDate: any;
+    employmentType: any;
+    designation: any;
+    status: any;
+    metadata: any;
+    createdAt: any;
+    createdBy: any;
+    updatedAt: any;
+    updatedBy: any;
+};

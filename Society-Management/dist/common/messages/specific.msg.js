@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SOCIETYAMENITYMAP = exports.SOCIETYADMIN = exports.MEDIA = exports.FLAT = exports.PACKAGETIERMAP = exports.CATGAMENITYMAP = exports.AMENITYTIERCATGMAP = exports.USERRESIDENTMAP = exports.USERSOCIETYMAP = exports.SOCIETY = void 0;
+exports.SECURITYGUARDS = exports.SOCIETYAMENITYMAP = exports.SOCIETYADMIN = exports.MEDIA = exports.FLAT = exports.PACKAGETIERMAP = exports.CATGAMENITYMAP = exports.AMENITYTIERCATGMAP = exports.USERRESIDENTMAP = exports.USERSOCIETYMAP = exports.SOCIETY = void 0;
 exports.SOCIETY = {
     ERRORS: {
         INVALID_SOCIETY_ID: 'Invalid facility id',
@@ -42,6 +42,7 @@ exports.USERRESIDENTMAP = {
         FETCH_FAILED: 'Unable to fetch resident details',
         UPDATE_FAILED: 'Unable to update resident details',
         DELETE_FAILED: 'Failed to delete resident details',
+        RESIDENT_NOT_FOUND: 'Resident does not exist',
     },
     SUCCESS: {
         RESIDENT_CREATED: 'Resident details inserted successfully',
@@ -162,6 +163,21 @@ exports.SOCIETYAMENITYMAP = {
         SOCAMNT_UPDATED: 'Mapped society and amenity updated successfully',
         SOCAMNT_PARTIAL: 'Some society amenity mappings were created and some were updated.',
         SOCAMNT_DELETED: 'Mapped society and amenity marked as deleted',
+    }
+};
+exports.SECURITYGUARDS = {
+    ERRORS: {
+        INVALID_ID: 'Invalid id',
+        CREATE_FAILED: 'Unable to insert security guard details',
+        FETCH_FAILED: 'Unable to fetch security guard details',
+        UPDATE_FAILED: 'Unable to update security guard details',
+        DELETE_FAILED: 'Failed to delete security guard details',
+    },
+    SUCCESS: {
+        SECURITY_GUARDS_CREATED: 'Security guard details inserted successfully',
+        SECURITY_GUARDS_FETCHED: 'Security guard details fetched successfully',
+        SECURITY_GUARDS_UPDATED: 'Security guard details updated successfully',
+        SECURITY_GUARDS_DELETED: 'Security guard details marked as deleted',
     }
 };
 //# sourceMappingURL=specific.msg.js.map

@@ -29,7 +29,10 @@ const jwt_auth_guard_1 = require("./common/security/guards/jwt-auth.guard");
 const society_admin_module_1 = require("./society-admin/society-admin.module");
 const society_amenity_mappings_module_1 = require("./society-amenity-mappings/society-amenity-mappings.module");
 const resident_details_module_1 = require("./resident-details/resident-details.module");
+const security_guards_module_1 = require("./security-guards/security-guards.module");
 const vendor_details_module_1 = require("./vendor-details/vendor-details.module");
+const vehicle_registration_module_1 = require("./vehicle_registration/vehicle-registration.module");
+const parking_slot_management_module_1 = require("./parking-slot-management/parking-slot-management.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -55,7 +58,10 @@ exports.AppModule = AppModule = __decorate([
             society_admin_module_1.SocietyAdminModule,
             society_amenity_mappings_module_1.SocietyAmenityMappingsModule,
             resident_details_module_1.ResidentDetailsModule,
+            security_guards_module_1.SecurityGuardsModule,
             vendor_details_module_1.VendorDetailsModule,
+            vehicle_registration_module_1.VehicleModule,
+            parking_slot_management_module_1.ParkingSlotModule,
         ],
         providers: [
             jwt_strategy_1.JwtStrategy,

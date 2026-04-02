@@ -13,6 +13,7 @@ exports.ResidentDetails = void 0;
 const typeorm_1 = require("typeorm");
 let ResidentDetails = class ResidentDetails {
     resident_uuid;
+    member_id;
     block_id;
     flat_number;
     owner_type;
@@ -31,6 +32,10 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
     __metadata("design:type", String)
 ], ResidentDetails.prototype, "resident_uuid", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar' }),
+    __metadata("design:type", String)
+], ResidentDetails.prototype, "member_id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'bigint' }),
     __metadata("design:type", Number)

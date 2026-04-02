@@ -40,6 +40,7 @@ export declare class UserSocietyMapService {
         message: string;
     }>;
     _updateSql(id: string, data: UpdateUserSocietyMapDto, req: any): Promise<{
+        success: boolean;
         message: string;
         id: any;
         userId: any;

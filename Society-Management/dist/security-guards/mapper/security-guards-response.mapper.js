@@ -1,0 +1,32 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.securityGuardsResponseMapper = securityGuardsResponseMapper;
+function securityGuardsResponseMapper(entity) {
+    return {
+        id: entity.id,
+        guardId: entity.guardId,
+        vendorId: entity.vendorId,
+        dateOfBirth: entity.dateOfBirth,
+        gender: entity.gender,
+        emergencyContact: entity.emergencyContact,
+        permanentAddress: entity.permanentAddress,
+        currentAddress: entity.currentAddress,
+        profilePhotoUrl: entity.profilePhotoUrl,
+        idType: entity.idType,
+        idNumber: entity.idNumber,
+        idProofUrl: entity.idProofUrl,
+        policeVerificationStatus: entity.policeVerificationStatus,
+        backgroundCheckStatus: entity.backgroundCheckStatus,
+        employeeCode: entity.employeeCode,
+        joiningDate: entity.joiningDate,
+        employmentType: entity.employmentType,
+        designation: entity.designation,
+        status: entity.status,
+        metadata: entity.metadata,
+        createdAt: entity.createdAt,
+        createdBy: entity.createdBy,
+        updatedAt: entity.updatedAt,
+        updatedBy: entity.updatedBy,
+    };
+}
+//# sourceMappingURL=security-guards-response.mapper.js.map

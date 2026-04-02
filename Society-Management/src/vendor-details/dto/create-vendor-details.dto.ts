@@ -18,6 +18,11 @@ export class CreateVendorDetailsDto {
   @IsNotEmpty()
   vendorName: string;
 
+  // @ApiProperty({ example: ' 6bf529ea-17e9-4b0e-bb62-beb224b04678' })
+  // @IsString()
+  // @IsNotEmpty()
+  // societyId: string;
+
   @ApiProperty({ example: 'guard_agency' })
   @IsString()
   @IsNotEmpty()
